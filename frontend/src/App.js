@@ -10,8 +10,11 @@ function App() {
     <div className="App">
       <BrowserRouter>
         <Routes>
-          {/* <ProtectedRoute exact path="/" element={<Home />} /> */}
           <Route exact path="/login" element={<SignIn />} />
+          <Route path="/admin" element={<ProtectedRoute />}>
+            <Route path="hi" element={<Home />} />
+            <Route path="me" element={<Home />} />
+          </Route>
           <Route path="*" element={<PageNotFound />} />
         </Routes>
       </BrowserRouter>

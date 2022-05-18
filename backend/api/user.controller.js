@@ -70,7 +70,7 @@ class UserController {
 
     static async verifyJWT(req, res, next) {
         // removes 'Bearer` from token
-        const token = req.headers["x-access-token"]?.split(' ')[1]
+        const token = req.headers["token"]?.split(' ')[1]
 
         if (token) {
             jwt.verify(token, process.env.PASSPORTSECRET, (err, decoded) => {
