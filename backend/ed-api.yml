@@ -1,0 +1,123 @@
+openapi: "3.0.2"
+info:
+  title: ED Board API
+  version: "1.0"
+servers:
+  - url: https://localhost:3001/api/edboard
+paths:
+  /user/login:
+    post:
+      description: Log in to API
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  example: myUser
+                password:
+                  type: string
+                  example: myPassword
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Success
+                  token:
+                    type: string
+                    example: Bearer 102i3joekaxnz,mvnxcijzkvlckj
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Invalid Username or Password
+
+  /user/verify:
+    get:
+      description: verify if user is logged in
+      parameters:
+        - in: header
+          name: token
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  isLoggedIn:
+                    type: boolean
+                    example: true
+                  username:
+                    type: string
+                    example: myUsername
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  isLoggedIn:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: Failed To Authenticate
+  /user/register:
+    post:
+      description: Register new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  example: myUser
+                password:
+                  type: string
+                  example: myPassword
+                role:
+                  type: string
+                  example: admin
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Success
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Username has already been taken
