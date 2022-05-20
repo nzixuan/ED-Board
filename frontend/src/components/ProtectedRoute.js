@@ -20,10 +20,10 @@ function ProtectedRoute({ children }) {
         console.log("logged in?", loggedIn);
     });
 
-    if (!loggedIn)
-        return <Navigate to="/login" />
+    if (loggedIn == null)
+        return null
 
-    return <Outlet />;
+    return loggedIn ? <Outlet /> : <Navigate to="/login" />;
 }
 
 export default ProtectedRoute;

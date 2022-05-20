@@ -7,17 +7,17 @@ class UserController {
     static async login(req, res, next) {
         const userLoggingIn = req.body;
 
-        if (!userLoggingIn) return res.json({ message: "Server Error" })
+        if (!userLoggingIn) return res.status(400).json({ message: "Server Error" })
 
         const validationError = loginValidation(userLoggingIn).error
 
         if (validationError) {
-            return res.json({ message: validationError.details[0].message })
+            return res.status(400).json({ message: validationError.details[0].message })
         } else {
             User.findOne({ username: userLoggingIn.username.toLowerCase() })
                 .then(dbUser => {
                     if (!dbUser) {
-                        return res.json({ message: "Invalid Username or Password" })
+                        return res.status(400).json({ message: "Invalid Username or Password" })
                     }
                     bcrypt.compare(userLoggingIn.password, dbUser.password)
                         .then(isCorrect => {
@@ -36,7 +36,7 @@ class UserController {
                                     }
                                 )
                             } else {
-                                return res.json({ message: "Invalid Username or Password" })
+                                return res.status(400).json({ message: "Invalid Username or Password" })
                             }
                         })
 
@@ -53,9 +53,9 @@ class UserController {
         const validationError = registrationValidation(user).error
 
         if (validationError) {
-            return res.json({ message: validationError.details[0].message })
+            return res.status(400).json({ message: validationError.details[0].message })
         } else if (takenUsername) {
-            return res.json({ message: "Username has already been taken" })
+            return res.status(400).json({ message: "Username has already been taken" })
         } else {
             user.password = await bcrypt.hash(req.body.password, 10)
             const dbUser = new User({
@@ -74,7 +74,7 @@ class UserController {
 
         if (token) {
             jwt.verify(token, process.env.PASSPORTSECRET, (err, decoded) => {
-                if (err) return res.json({ isLoggedIn: false, message: "Failed To Authenticate" })
+                if (err) return res.status(400).json({ isLoggedIn: false, message: "Failed To Authenticate" })
                 req.user = {};
                 req.user.id = decoded.id
                 req.user.username = decoded.username
@@ -82,7 +82,7 @@ class UserController {
                 next()
             })
         } else {
-            res.json({ message: "Incorrect Token Given", isLoggedIn: false })
+            res.status(400).json({ isLoggedIn: false, message: "Incorrect Token Given" })
         }
     }
 
