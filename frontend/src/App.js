@@ -4,20 +4,23 @@ import PageNotFound from './components/PageNotFound';
 import ProtectedRoute from './components/ProtectedRoute';
 import Home from './components/Home'
 import SignIn from "./components/SignIn";
+import { UserProvider } from "./context/UserContext";
 
 function App() {
   return (
     <div className="App">
-      <BrowserRouter>
-        <Routes>
-          <Route exact path="/login" element={<SignIn />} />
-          <Route path="/admin" element={<ProtectedRoute />}>
-            <Route path="hi" element={<Home />} />
-            <Route path="me" element={<Home />} />
-          </Route>
-          <Route path="*" element={<PageNotFound />} />
-        </Routes>
-      </BrowserRouter>
+      <UserProvider>
+        <BrowserRouter>
+          <Routes>
+            <Route exact path="/login" element={<SignIn />} />
+            <Route path="/admin" element={<ProtectedRoute />}>
+              <Route path="" element={<Home />} />
+              <Route path="*" element={<PageNotFound />} />
+            </Route>
+            <Route path="*" element={<PageNotFound />} />
+          </Routes>
+        </BrowserRouter>
+      </UserProvider>
     </div >
   );
 }

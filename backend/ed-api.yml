@@ -68,6 +68,9 @@ paths:
                   username:
                     type: string
                     example: myUsername
+                  role:
+                    type: string
+                    example: admin
         "400":
           description: Bad Request
           content:

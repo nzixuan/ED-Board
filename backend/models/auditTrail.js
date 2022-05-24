@@ -5,15 +5,23 @@ const auditTrailSchema = mongoose.Schema({
         type: String,
         required: true,
     },
-    log: {
+    type: {
         type: String,
+        enum: ["login", "logout", "edit-roster", "create-roster"],
         required: true,
     },
+
     delta: {
         type: Object
     },
-    editedDocumentId: {
-        type: mongoose.Schema.Types.ObjectId
+
+    documentId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "roster"
+    },
+
+    log: {
+        type: String,
     }
 }, { timestamps: true })
 

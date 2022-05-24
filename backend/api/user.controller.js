@@ -30,7 +30,7 @@ class UserController {
                                 jwt.sign(
                                     payload,
                                     process.env.PASSPORTSECRET,
-                                    { expiresIn: 86400 },
+                                    { expiresIn: 1800 },
                                     (err, token) => {
                                         return res.json({ message: "Success", token: "Bearer " + token })
                                     }
@@ -87,7 +87,7 @@ class UserController {
     }
 
     static async verify(req, res, next) {
-        return res.json({ isLoggedIn: true, username: req.user.username })
+        return res.json({ isLoggedIn: true, username: req.user.username, role: req.user.role })
     }
 }
 
