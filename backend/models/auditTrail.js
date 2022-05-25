@@ -19,10 +19,6 @@ const auditTrailSchema = mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: "roster"
     },
-
-    log: {
-        type: String,
-    }
 }, { timestamps: true })
 
 const auditTrail = mongoose.model("audit-trail", auditTrailSchema)

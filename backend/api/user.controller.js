@@ -2,7 +2,8 @@ const User = require("../models/user.js")
 const bcrypt = require("bcrypt")
 const jwt = require("jsonwebtoken")
 const { registrationValidation, loginValidation } = require("../validation.js")
-
+const { createTrail } = require("./auditTrail.controller")
+const { db } = require("../models/user.js")
 class UserController {
     static async login(req, res, next) {
         const userLoggingIn = req.body;
@@ -32,6 +33,7 @@ class UserController {
                                     process.env.PASSPORTSECRET,
                                     { expiresIn: 1800 },
                                     (err, token) => {
+                                        createTrail({ username: dbUser.username, type: "login" })
                                         return res.json({ message: "Success", token: "Bearer " + token })
                                     }
                                 )
@@ -64,7 +66,7 @@ class UserController {
                 role: user.role
             });
             dbUser.save()
-            return res.json({ message: "Success" })
+            return res.json({ message: "User Registered" })
         }
     }
 
@@ -88,6 +90,16 @@ class UserController {
 
     static async verify(req, res, next) {
         return res.json({ isLoggedIn: true, username: req.user.username, role: req.user.role })
+    }
+
+    static async logout(req, res, next) {
+        try {
+            createTrail({ username: req.body.username, type: "logout" })
+        }
+        catch (err) {
+            return res.status(400).json({ message: err.message })
+        }
+        return res.json({ message: "User has logged out" })
     }
 }
 

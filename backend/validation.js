@@ -1,4 +1,6 @@
 const Joi = require("joi")
+Joi.objectId = require('joi-objectid')(Joi)
+
 
 const registerSchema = Joi.object({
     username: Joi.string().min(4).max(30).alphanum().required(),
@@ -20,14 +22,18 @@ const loginValidation = (data => {
     return loginSchema.validate(data);
 })
 
-// const groupSchema = Joi.object({
-//     groupName: Joi.string().required().min(3).max(100),
-//     courses: Joi.array().items(Joi.string().uri()).unique()
-// })
+const auditSchema = Joi.object({
+    username: Joi.string().required(),
+    type: Joi.string().required().valid("login", "logout", "edit-roster", "create-roster"),
+    delta: Joi.object(),
+    documentId: Joi.objectId(),
+    log: Joi.string()
+})
 
-// const groupValidation = data => {
-//     return groupSchema.validate(data)
-// }
+const auditValidation = (data => {
+    return auditSchema.validate(data);
+})
+
 
 
 
@@ -35,5 +41,5 @@ const loginValidation = (data => {
 module.exports = {
     registrationValidation: registrationValidation,
     loginValidation: loginValidation,
-    // groupValidation: groupValidation
+    auditValidation: auditValidation
 }
