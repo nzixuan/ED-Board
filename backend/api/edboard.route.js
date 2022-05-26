@@ -12,11 +12,12 @@ router.route("/user/register").post(UserCtrl.register)
 //TODO: handle timeout
 router.route("/user/logout").post(UserCtrl.logout)
 
-
-router.route("/audit/create").post(AuditTrailController.createAudit)
 router.route("/audit/").get(AuditTrailController.viewAudit)
+router.route("/audit/create").post(AuditTrailController.createAudit)
 
-//Testing for roster schema
-router.route("/roster/create").get(RosterCtrl.createRoster)
+router.route("/roster/").get(RosterCtrl.viewRoster)
+router.route("/roster/create").post(RosterCtrl.createRoster)
+router.route("/roster/types").get(RosterCtrl.getTypes)
+//TODO: Edit roster
 
 module.exports = router

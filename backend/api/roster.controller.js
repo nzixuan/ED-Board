@@ -1,84 +1,24 @@
+const { date } = require("joi")
+const Joi = require("joi")
 const Roster = require("../models/roster.js")
+const { rosterValidation, rosterQueryValidation } = require("../validation.js")
+const { createTrail } = require("./auditTrail.controller")
 
 class RosterController {
-    static async createRoster(req, res, next) {
-        // // Creation of new staff and roster
 
-        // const roster = new Roster({
-        //     date: '2022-12-23', roster: [{
-        //         assignment: "Snr Dr 2",
-        //         name: "Z X Ng",
-        //         shift: "AM",
-        //         staffType: "Doctor",
-        //         note: "#",
-        //     },
-        //     {
-        //         assignment: "Snr Dr 2",
-        //         name: "Z Y Ng",
-        //         shift: "PM",
-        //         staffType: "Doctor",
-        //     },
-        //     {
-        //         assignment: "Snr Dr 2",
-        //         name: "1",
-        //         shift: "AM",
-        //         staffType: "Doctor",
-        //         note: "#",
-        //     },
-        //     {
-        //         assignment: "Snr Dr 1",
-        //         name: "2",
-        //         shift: "PM",
-        //         staffType: "Doctor",
-        //     },
-        //     {
-        //         assignment: "Snr Dr 1",
-        //         name: "Z X Ng",
-        //         shift: "AM",
-        //         staffType: "Doctor",
-        //         note: "#",
-        //     },
-        //     {
-        //         assignment: "Snr Dr 3",
-        //         name: "Z Y Ng",
-        //         shift: "PM",
-        //         staffType: "Doctor",
-        //     },
-        //     {
-        //         assignment: "NO",
-        //         name: "2okas",
-        //         shift: "AM",
-        //         staffType: "Nurse",
-        //     },
-        //     ]
-        // })
-        // roster.save()
-
-        // test query role from roster
-
-        // Roster.find({ date: '2022-12-22', 'roster.staffType': "Doctor" }).exec((err, result) => {
-        //     console.log(result[0].roster)
-        // })
-
-        // Roster.find({ date: '2022-12-22', 'roster.shift': "PM" }).exec((err, result) => {
-        //     console.log(result[0].roster)
-        // })
-
-        //Test Retrieving from database
-
+    static async viewRoster(req, res, next) {
+        const query = { date: req.query.date, staffType: req.query.staffType }
+        const validationError = rosterQueryValidation(query).error
+        if (validationError)
+            return res.status(400).json({ message: validationError.details[0].message })
         Roster.aggregate([
-            { $match: { date: new Date("2022-12-23") } },
+            { $match: { date: new Date(query.date) } },
             { $unwind: "$roster" },
-            // {
-            //     $match: {
-            //         "roster.shift": "PM",
-            //     },
-            // },
-            {
+            ...(query.staffType ? [{
                 $match: {
-                    "roster.staffType": "Doctor",
+                    "roster.staffType": query.staffType,
                 },
-            },
+            }] : []),
             {
                 $sort: {
                     "roster.assignment": 1, "roster.shift": 1
@@ -86,12 +26,50 @@ class RosterController {
             },
             { $replaceWith: "$roster" },
         ]).exec((err, result) => {
-            console.log(result)
+            return res.json(result)
+
         });
+    }
 
+    static async createRoster(req, res, next) {
+        const roster = req.body
+        const validationError = rosterValidation(roster).error
 
+        if (validationError)
+            return res.status(400).json({ message: validationError.details[0].message })
 
-        return res.json({ message: "Success" })
+        const newRoster = new Roster({
+            date: roster.date,
+            roster: roster.roster
+        })
+
+        newRoster.save()
+
+        //Audit
+        try {
+            createTrail({ username: roster.username, type: "create-roster", documentId: newRoster._id.toString() })
+        }
+        catch (err) {
+            return res.status(500).json({ message: err.message })
+        }
+        return res.json({ message: "Roster Created" })
+
+    }
+
+    static async getTypes(req, res, next) {
+
+        const date = new Date(req.query.date)
+        if (!req.query.date)
+            return res.status(400).json({ message: "query date is required" })
+        if (!date)
+            return res.status(400).json({ message: "date is invalid" })
+        const types = await Roster.find({ date: date }).distinct("roster.staffType")
+
+        return res.json(types)
+    }
+    //TODO: Edit Roster 
+    static async editRoster(req, res, next) {
+
     }
 }
 module.exports = RosterController
