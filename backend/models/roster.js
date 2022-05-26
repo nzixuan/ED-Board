@@ -11,11 +11,11 @@ const rosteredStaffSchema = mongoose.Schema({
     },
     shift: {
         type: String,
-        enum: ["AM", "PM", "ND", "Straddle"]
+        enum: ["am", "pm", "nd", "straddle"]
     },
     staffType: {
         type: String,
-        enum: ["Doctor", "Nurse", "Logistics", "HA", "EYE"],
+        enum: ["doctor", "nurse", "logs", "ha", "eye"],
         required: true
     },
     note: {

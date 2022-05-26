@@ -27,19 +27,43 @@ const auditSchema = Joi.object({
     type: Joi.string().required().valid("login", "logout", "edit-roster", "create-roster"),
     delta: Joi.object(),
     documentId: Joi.objectId(),
-    log: Joi.string()
 })
 
 const auditValidation = (data => {
     return auditSchema.validate(data);
 })
 
+const rosterSchema = Joi.object({
+    date: Joi.date().required(),
+    roster: Joi.array().required().items(Joi.object({
+        assignment: Joi.string().required(),
+        name: Joi.string().required(),
+        shift: Joi.string().valid("am", "pm", "nd", "straddle"),
+        staffType: Joi.string().required().valid("doctor", "nurse", "log", "ha", "eye"),
+        note: Joi.string()
+    })),
+    username: Joi.string().required()
+})
 
+const rosterValidation = (data => {
+    return rosterSchema.validate(data)
+})
+
+const rosterQuerySchema = Joi.object({
+    date: Joi.date().required(),
+    staffType: Joi.string()
+})
+
+const rosterQueryValidation = (data => {
+    return rosterQuerySchema.validate(data)
+})
 
 
 
 module.exports = {
     registrationValidation: registrationValidation,
     loginValidation: loginValidation,
-    auditValidation: auditValidation
+    auditValidation: auditValidation,
+    rosterValidation: rosterValidation,
+    rosterQueryValidation: rosterQueryValidation
 }

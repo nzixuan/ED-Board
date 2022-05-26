@@ -4,7 +4,7 @@ info:
   version: "1.0"
 servers:
   - url: https://localhost:3001/api/edboard
-tags: [{ name: "user" }, { name: "audit" }]
+tags: [{ name: "user" }, { name: "audit" }, { name: "roster" }]
 paths:
   /user/login:
     post:
@@ -261,3 +261,120 @@ paths:
                   message:
                     type: string
                     example: username is required
+
+  /roster:
+    get:
+      tags:
+        - "roster"
+      description: View roster
+      parameters:
+        - in: query
+          name: date
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: staffType
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                example: [{ name: Dr 1 }, { name: Dr 2 }, { name: Dr 3 }]
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: username is required
+
+  /roster/create:
+    post:
+      tags:
+        - "roster"
+      description: Create new roster
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  example: myUser
+                date:
+                  type: string
+                  example: 12/12/2022
+                roster:
+                  type: array
+                  example:
+                    [
+                      {
+                        "assignment": "Snr Dr 2",
+                        "name": "Z X Ng",
+                        "shift": "am",
+                        "staffType": "doctor",
+                        "note": "#",
+                      },
+                    ]
+
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Roster created
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: username is required
+
+  /roster/types:
+    get:
+      tags:
+        - "roster"
+      description: View distinct staff types
+      parameters:
+        - in: query
+          name: date
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                example: ["doctor", "nurse"]
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: query date is required
