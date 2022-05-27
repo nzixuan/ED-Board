@@ -6,6 +6,7 @@ const { AuditTrailController } = require("./auditTrail.controller.js")
 
 const router = express.Router()
 
+//Delete user
 router.route("/user/login").post(UserCtrl.login)
 router.route("/user/verify").get(UserCtrl.verifyJWT, UserCtrl.verify)
 router.route("/user/register").post(UserCtrl.register)
