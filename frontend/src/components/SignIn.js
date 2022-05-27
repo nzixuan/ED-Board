@@ -37,7 +37,8 @@ export default function SignIn() {
                 navigate("/admin")
             }).catch((err) => {
                 console.log(err)
-                setMessage(err.response.data.message)
+                if (err.response.data.message)
+                    setMessage(err.response.data.message)
                 usernameInput.current.value = ""
                 passwordInput.current.value = ""
             })
