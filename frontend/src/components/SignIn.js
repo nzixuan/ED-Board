@@ -5,8 +5,6 @@ import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Checkbox from '@mui/material/Checkbox';
 import Collapse from '@mui/material/Collapse';
 import Link from '@mui/material/Link';
 import Grid from '@mui/material/Grid';
@@ -37,7 +35,7 @@ export default function SignIn() {
                 navigate("/admin")
             }).catch((err) => {
                 console.log(err)
-                if (err.response.data.message)
+                if (err.response.data)
                     setMessage(err.response.data.message)
                 usernameInput.current.value = ""
                 passwordInput.current.value = ""

@@ -1,5 +1,5 @@
 import React, { useContext, useState, useEffect } from "react";
-import { Navigate, Route, Outlet } from "react-router-dom";
+import { Navigate, Outlet } from "react-router-dom";
 import axios from 'axios'
 import { UserContext } from "../context/UserContext";
 
@@ -15,7 +15,7 @@ function ProtectedRoute({ children }) {
             .get(process.env.REACT_APP_API_URL + '/api/edboard/user/verify', { headers: { token: token } })
             .then((res) => {
                 setLoggedIn(res.data.isLoggedIn);
-                if (user.username != res.data.username)
+                if (user.username !== res.data.username)
                     setUser({ username: res.data.username, role: res.data.role })
             })
             .catch((err) => {
