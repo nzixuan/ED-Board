@@ -11,7 +11,6 @@ const rosteredStaffSchema = mongoose.Schema({
     },
     shift: {
         type: String,
-        enum: ["am", "pm", "nd", "straddle"]
     },
     staffType: {
         type: String,

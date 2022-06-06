@@ -1,111 +1,66 @@
 import * as React from 'react';
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useNavigate } from "react-router-dom";
-import Avatar from '@mui/material/Avatar';
-import Button from '@mui/material/Button';
-import CssBaseline from '@mui/material/CssBaseline';
-import TextField from '@mui/material/TextField';
-import Collapse from '@mui/material/Collapse';
-import Link from '@mui/material/Link';
-import Grid from '@mui/material/Grid';
-import Box from '@mui/material/Box';
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
-import Typography from '@mui/material/Typography';
-import Container from '@mui/material/Container';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
 import axios from 'axios'
-import { Alert } from '@mui/material';
+import { InputText } from 'primereact/inputtext';
+import { Button } from 'primereact/button';
+import { Messages } from 'primereact/messages';
 
+import 'primereact/resources/themes/saga-blue/theme.css';
+import 'primereact/resources/primereact.min.css';
+import 'primeicons/primeicons.css';
+import 'primeflex/primeflex.css';
 
-const theme = createTheme();
 
 export default function SignIn() {
-    const [message, setMessage] = useState('');
+    const message = useRef(null);
+    const [state, setState] = useState({ username: '', password: '' })
     const navigate = useNavigate();
-    const usernameInput = React.useRef(null);
-    const passwordInput = React.useRef(null);
 
-
-    const handleSubmit = (event) => {
-        event.preventDefault();
-        const data = new FormData(event.currentTarget);
+    const handleSubmit = () => {
         axios.post(process.env.REACT_APP_API_URL + '/api/edboard/user/login',
-            { username: data.get('username'), password: data.get('password') }).then((res) => {
+            { username: state.username, password: state.password }).then((res) => {
                 localStorage.setItem('token', res.data.token)
                 navigate("/admin")
             }).catch((err) => {
                 console.log(err)
                 if (err.response.data)
-                    setMessage(err.response.data.message)
-                usernameInput.current.value = ""
-                passwordInput.current.value = ""
+                    message.current.show({ severity: 'error', summary: '', detail: err.response.data.message });
+
+                setState({ username: '', password: '' })
             })
     };
 
     return (
-        <ThemeProvider theme={theme}>
-            <Container component="main" maxWidth="xs">
-                <CssBaseline />
-                <Box
-                    sx={{
-                        marginTop: 8,
-                        display: 'flex',
-                        flexDirection: 'column',
-                        alignItems: 'center',
-                    }}
-                >
-                    <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
-                        <LockOutlinedIcon />
-                    </Avatar>
-                    <Typography component="h1" variant="h5">
-                        Sign in
-                    </Typography>
-                    <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
-                        <TextField
-                            margin="normal"
-                            required
-                            fullWidth
-                            inputRef={usernameInput}
-                            id="username"
-                            label="Username"
-                            name="username"
-                            autoComplete="username"
-                            autoFocus
-                        />
-                        <TextField
-                            margin="normal"
-                            required
-                            fullWidth
-                            inputRef={passwordInput}
-                            name="password"
-                            label="Password"
-                            type="password"
-                            id="password"
-                            autoComplete="current-password"
-                        />
-                        <Collapse in={message}><Alert variant='outlined' severity='error'>{message}</Alert></Collapse>
 
-                        {/* {message && <Alert variant='outlined' severity='error'>{message}</Alert>} */}
-                        <Button
-                            type="submit"
-                            fullWidth
-                            variant="contained"
-                            sx={{ mt: 3, mb: 2 }}
-                        >
-                            Sign In
-                        </Button>
-                        <Grid container>
-                            <Grid item xs>
-                            </Grid>
-                            <Grid item>
-                                <Link href="#" variant="body2">
-                                    {"Don't have an account? Sign Up"}
-                                </Link>
-                            </Grid>
-                        </Grid>
-                    </Box>
-                </Box>
-            </Container>
-        </ThemeProvider >
+        <div className="flex align-items-center justify-content-center ">
+            <div className="surface-card p-4 shadow-2 border-round w-full lg:w-4 my-6">
+                <div className="text-center mb-5">
+                    <div className="text-900 text-3xl font-medium mb-3">Log in</div>
+                    {/* <span className="text-600 font-medium line-height-3">Don't have an account?</span>
+                    <a className="font-medium no-underline ml-2 text-blue-500 cursor-pointer">Create today!</a> */}
+                </div>
+                <div>
+                    <label htmlFor="username" className="block text-900 font-medium mb-2">Username</label>
+                    <InputText id="username" type="text" value={state.username} onChange={(e) => setState({ ...state, username: e.target.value })} className="w-full mb-3" />
+
+                    <label htmlFor="password" className="block text-900 font-medium mb-2">Password</label>
+                    <InputText id="password" type="password" value={state.password} onChange={(e) => setState({ ...state, password: e.target.value })} className="w-full mb-3" />
+
+                    {/* <div className="flex align-items-center justify-content-between mb-6"> */}
+                    <Messages className="w-full mb-3" ref={message}></Messages>
+
+                    {/* <div className="flex align-items-center">
+                            <Checkbox id="rememberme" onChange={e => setChecked(e.checked)} checked={checked} className="mr-2" />
+                            <label htmlFor="rememberme">Remember me</label>
+                        </div> */}
+                    {/* <a className="font-medium no-underline ml-2 text-blue-500 text-right cursor-pointer">Forgot your password?</a> */}
+                    {/* </div> */}
+
+                    <Button label="Sign In" icon="pi pi-user" className="w-full" onClick={handleSubmit} />
+                </div>
+            </div>
+        </div>
+
     );
 }

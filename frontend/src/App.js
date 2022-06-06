@@ -5,6 +5,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 import Home from './components/Home'
 import SignIn from "./components/SignIn";
 import { UserProvider } from "./context/UserContext";
+import CreateRoster from "./components/CreateRoster";
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
               <Route path="" element={<Home />} />
               <Route path="*" element={<PageNotFound />} />
             </Route>
+            <Route path="/create" element={<CreateRoster />} />
             <Route path="*" element={<PageNotFound />} />
           </Routes>
         </BrowserRouter>

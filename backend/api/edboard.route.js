@@ -17,6 +17,8 @@ router.route("/audit/").get(AuditTrailController.viewAudit)
 router.route("/audit/create").post(AuditTrailController.createAudit)
 
 router.route("/roster/").get(RosterCtrl.viewRoster)
+router.route("/roster/convert").post(RosterCtrl.ExceltoJson)
+router.route("/roster/massCreate").post(RosterCtrl.massCreateRoster)
 router.route("/roster/create").post(RosterCtrl.createRoster)
 router.route("/roster/types").get(RosterCtrl.getTypes)
 //TODO: Edit roster
