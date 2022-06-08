@@ -24,52 +24,71 @@ const loginValidation = (data => {
 
 const auditSchema = Joi.object({
     username: Joi.string().required(),
-    type: Joi.string().required().valid("login", "logout", "edit-roster", "create-roster"),
+    type: Joi.string().required().valid("login", "logout", "edit-roster", "create-roster", "delete-roster"),
     delta: Joi.object(),
     documentId: Joi.objectId(),
+    deletedDocumentDate: Joi.date()
 })
 
 const auditValidation = (data => {
     return auditSchema.validate(data);
 })
 
-const addRosterSchema = Joi.object({
+const staffSchema = Joi.object({
+    name: Joi.string().required(),
+    shift: Joi.string(),
+    note: Joi.string()
+})
+
+const rosterSchema = Joi.object({
+    assignment: Joi.string().required(),
+    am: staffSchema,
+    pm: staffSchema,
+    nd: staffSchema,
+    straddle1: staffSchema,
+    straddle2: staffSchema
+})
+
+const rostersSchema = Joi.object({
+    staffType: Joi.string().required().valid("doctor", "nurse", "log", "ha", "eye"),
+    roster: Joi.array().required().items(rosterSchema)
+})
+
+
+const addRosterListSchema = Joi.object({
     date: Joi.date().required(),
-    roster: Joi.array().required().items(Joi.object({
-        assignment: Joi.string().required(),
-        name: Joi.string().required(),
-        shift: Joi.string(),
-        staffType: Joi.string().required().valid("doctor", "nurse", "log", "ha", "eye"),
-        note: Joi.string()
-    })),
+    rosters: Joi.array().required().items(rostersSchema),
     username: Joi.string().required()
 })
 
-const addRosterValidation = (data => {
-    return addRosterSchema.validate(data)
+const addRosterListValidation = (data => {
+    return addRosterListSchema.validate(data)
 })
 
 const rosterQuerySchema = Joi.object({
     date: Joi.date().required(),
-    staffType: Joi.string()
 })
 
 const rosterQueryValidation = (data => {
     return rosterQuerySchema.validate(data)
 })
 
+const deleteRosterSchema = Joi.object({
+    date: Joi.date().required(),
+    username: Joi.string().required()
+})
+
+const deleteRosterValidation = (data => {
+    return deleteRosterSchema.validate(data)
+})
+
 const massCreateSchema = Joi.object({
     username: Joi.string().required(),
     rosters: Joi.array().required().items(Joi.object({
         date: Joi.date().required(),
-        roster: Joi.array().required().items(Joi.object({
-            assignment: Joi.string().required(),
-            name: Joi.string().required(),
-            shift: Joi.string(),
-            staffType: Joi.string().required().valid("doctor", "nurse", "log", "ha", "eye"),
-            note: Joi.string()
-        }))
+        rosters: Joi.array().required().items(rostersSchema)
     }))
+
 })
 
 const massCreateValidation = (data => {
@@ -80,7 +99,8 @@ module.exports = {
     registrationValidation: registrationValidation,
     loginValidation: loginValidation,
     auditValidation: auditValidation,
-    addRosterValidation: addRosterValidation,
+    addRosterListValidation: addRosterListValidation,
     rosterQueryValidation: rosterQueryValidation,
-    massCreateValidation: massCreateValidation
+    massCreateValidation: massCreateValidation,
+    deleteRosterValidation: deleteRosterValidation
 }

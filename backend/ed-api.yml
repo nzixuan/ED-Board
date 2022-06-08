@@ -273,10 +273,6 @@ paths:
           required: true
           schema:
             type: string
-        - in: query
-          name: staffType
-          schema:
-            type: string
       responses:
         200:
           description: OK
@@ -284,7 +280,26 @@ paths:
             application/json:
               schema:
                 type: array
-                example: [{ name: Dr 1 }, { name: Dr 2 }, { name: Dr 3 }]
+                example:
+                  [
+                    {
+                      "staffType": "doctor",
+                      "roster":
+                        [
+                          {
+                            "assignment": "SNR DR 1",
+                            "am": { "name": "Z X NG" },
+                            "pm": { "name": "M C CHIA" },
+                          },
+                          {
+                            "assignment": "REGISTRAR (R3)",
+                            "am": { "name": "M R DEE (R3/SC)#" },
+                            "straddle1": { "name": "YU QUAN# [8PM-2AM]" },
+                            "straddle2": { "name": "Testing Name [1AM - 3PM]" },
+                          },
+                        ],
+                    },
+                  ]
         400:
           description: Bad Request
           content:
@@ -294,8 +309,93 @@ paths:
                 properties:
                   message:
                     type: string
-                    example: username is required
+                    example: date is required
+  /roster/convert:
+    post:
+      tags:
+        - "roster"
+      description: Convert Excel files to json
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              properties:
+                # The property name 'file' will be used for all files.
+                Upload Excel:
+                  type: array
+                  items:
+                    type: string
+                    format: binary
+                    example: "DoctorsList.xlsx"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Convert success
+  /roster/massCreate:
+    post:
+      tags:
+        - "roster"
+      description: Create/edit/append multiple rosters
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  example: myUser
+                rosters:
+                  type: array
+                  example:
+                    [
+                      {
+                        "date": "5/27/22",
+                        "rosters":
+                          [
+                            "staffType": "doctor",
+                            "roster":
+                              [
+                                {
+                                  "assignment": "SNR DR 1",
+                                  "am": { "name": "Z X NG" },
+                                  "pm": { "name": "M CHONG" },
+                                },
+                              ],
+                          ],
+                      },
+                    ]
 
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Mass Roster Created
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: username is required
   /roster/create:
     post:
       tags:
@@ -313,17 +413,20 @@ paths:
                   example: myUser
                 date:
                   type: string
-                  example: 12/12/2022
-                roster:
+                  example: 5/27/22
+                rosters:
                   type: array
                   example:
                     [
                       {
-                        "assignment": "Snr Dr 2",
-                        "name": "Z X Ng",
-                        "shift": "am",
                         "staffType": "doctor",
-                        "note": "#",
+                        "roster":
+                          [
+                            {
+                              "assignment": "Snr Dr 2",
+                              "am": { "name": "Z X Ng", "note": "#" },
+                            },
+                          ],
                       },
                     ]
 

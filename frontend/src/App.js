@@ -16,6 +16,7 @@ function App() {
             <Route exact path="/login" element={<SignIn />} />
             <Route path="/admin" element={<ProtectedRoute />}>
               <Route path="" element={<Home />} />
+              <Route path="create" element={<CreateRoster />} />
               <Route path="*" element={<PageNotFound />} />
             </Route>
             <Route path="/create" element={<CreateRoster />} />

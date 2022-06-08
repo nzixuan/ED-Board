@@ -1,4 +1,5 @@
-const Roster = require("../models/roster.js")
+const RostersList = require("../models/roster.js")
+const { createTrail } = require("./auditTrail.controller")
 const XLSX = require("xlsx");
 
 const convert_to_json = (sheet) => {
@@ -8,20 +9,33 @@ const convert_to_json = (sheet) => {
     json.date = sheet["E1"]["w"]
     const typeCell = sheet["C1"]
     const jsa = XLSX.utils.sheet_to_json(sheet, { header: 1 })
-    let roster = []
+    let rosters = {}
     //If template is followed
     if (typeCell) {
+        let roster = []
         const type = typeCell["v"]
+        rosters.staffType = type.toLowerCase()
+
         for (let y = 3; y < jsa.length; y++) {
             const row = jsa[y]
+            let temp = {
+                assignment: row[0]
+            }
+            if (!row[0])
+                continue
             for (let x = 1; x < row.length; x++) {
                 //TODO: Handle notes and times
                 if (row[x])
-                    roster.push({ assignment: row[0], name: row[x], shift: jsa[1][x], staffType: type.toLowerCase() })
+                    temp[formatShift(jsa[1][x])] = { name: row[x] }
             }
+            if (Object.keys(temp).length > 1)
+                roster.push(temp)
         }
+        rosters.roster = roster
     } else {
         //Nurse Roster
+        rosters.staffType = "nurse"
+        let roster = {}
         for (let x = 1; x < jsa[2].length; x++) {
             if (jsa[2][x] && jsa[2][x].trim() === "RN") {
                 const shift = findShift(jsa, x)
@@ -31,8 +45,12 @@ const convert_to_json = (sheet) => {
                     if (jsa[y][0].trim() === "Legends")
                         break;
                     //TODO: Handle notes and times and multiple names in 1 row
-                    if (cell)
-                        roster.push({ assignment: jsa[y][0], name: cell, shift: shift, staffType: "nurse" })
+                    if (cell) {
+                        const assignment = jsa[y][0]
+                        if (!roster[assignment])
+                            roster[assignment] = { assignment: assignment }
+                        roster[assignment][formatShift(shift)] = { name: cell }
+                    }
                 }
             } else if (jsa[2][x] && jsa[2][x].trim() === "RN/AN") {
                 const shift = findShift(jsa, x)
@@ -46,13 +64,16 @@ const convert_to_json = (sheet) => {
                     if (cell.charAt(0) === '*') {
                         assignment = cell.substring(1)
                     } else if (assignment) {
-                        roster.push({ assignment: assignment, name: cell, shift: shift, staffType: "nurse" })
+                        if (!roster[assignment])
+                            roster[assignment] = { assignment: assignment }
+                        roster[assignment][formatShift(shift)] = { name: cell }
                     }
                 }
             }
         }
+        rosters.roster = Object.values(roster)
     }
-    json.roster = roster
+    json.rosters = [rosters]
     return json
 }
 
@@ -65,6 +86,72 @@ const findShift = (jsa, columnNumber) => {
         temp--
     }
     return jsa[1][temp]
+}
+
+const formatShift = (shift) => {
+    const lower = shift.toLowerCase().replace(/\s/g, '')
+    return lower
+}
+
+async function createNewRoster(username, date, rosters) {
+    const newRostersList = new RostersList({
+        date: date,
+        rosters: rosters
+    })
+
+    await newRostersList.save()
+
+    createTrail({
+        username: username, type: "create-roster", documentId: newRostersList._id.toString()
+    })
+
+    return newRostersList
+}
+
+async function editRoster(username, date, rosters) {
+
+    const db = await RostersList.findOne({ date: date },).exec()
+    for (let i = 0; i < db.rosters.length; i++) {
+        if (db.rosters[i].staffType === rosters[0].staffType) {
+            if (db.rosters[i] === rosters[0])
+                return
+            db.rosters[i] = rosters[0]
+        }
+    }
+    await db.save()
+    //TODO: Add Delta
+    createTrail({
+        username: username, type: "edit-roster", documentId: db._id.toString()
+    })
+
+    return db
+}
+
+async function appendRoster(username, date, rosters) {
+
+    const db = await RostersList.findOne({ date: date },).exec()
+    db.rosters.push(rosters[0])
+    await db.save()
+    //TODO: Add Delta
+    createTrail({
+        username: username, type: "edit-roster", documentId: db._id.toString()
+    })
+
+    return db
+}
+
+async function findTypes(date) {
+    const types = await RostersList.find({ date: date }).distinct("rosters.staffType")
+    return types
+}
+
+
+module.exports = {
+    convert_to_json: convert_to_json,
+    createNewRoster: createNewRoster,
+    findTypes: findTypes,
+    editRoster: editRoster,
+    appendRoster: appendRoster
 }
 
 // var combined_rosters = []
@@ -81,7 +168,3 @@ const findShift = (jsa, columnNumber) => {
 //     }
 
 // })
-
-module.exports = {
-    convert_to_json: convert_to_json
-}

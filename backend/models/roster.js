@@ -1,36 +1,53 @@
 const mongoose = require("mongoose")
 
-const rosteredStaffSchema = mongoose.Schema({
-    assignment: {
-        type: String,
-        required: true
-    },
+staffSchema = mongoose.Schema({
     name: {
         type: String,
-        required: true
-    },
-    shift: {
-        type: String,
-    },
-    staffType: {
-        type: String,
-        enum: ["doctor", "nurse", "logs", "ha", "eye"],
         required: true
     },
     note: {
         type: String,
     },
-})
+    time: {
+        type: String,
+    }
+}, { _id: false })
 
-const rosterSchema = mongoose.Schema({
+
+rosterSchema = mongoose.Schema({
+    assignment: {
+        type: String,
+        required: true
+    },
+
+    am: staffSchema,
+    pm: staffSchema,
+    straddle1: staffSchema,
+    straddle2: staffSchema
+
+}, { _id: false })
+
+const rostersSchema = mongoose.Schema({
+
+    staffType: {
+        type: String,
+        enum: ["doctor", "nurse", "logs", "ha", "eye"],
+        required: true
+    },
+
+    roster: [rosterSchema]
+
+}, { _id: false })
+
+const rosterListSchema = mongoose.Schema({
     date: {
         type: Date
     },
-    roster: {
-        type: [rosteredStaffSchema]
+    rosters: {
+        type: [rostersSchema]
     }
 }, { timestamps: true })
 
-const Roster = mongoose.model("roster", rosterSchema)
+const RostersList = mongoose.model("roster", rosterListSchema)
 
-module.exports = Roster;
+module.exports = RostersList;

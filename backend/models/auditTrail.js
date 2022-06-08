@@ -1,3 +1,4 @@
+const { date } = require("joi");
 const mongoose = require("mongoose")
 
 const auditTrailSchema = mongoose.Schema({
@@ -7,7 +8,7 @@ const auditTrailSchema = mongoose.Schema({
     },
     type: {
         type: String,
-        enum: ["login", "logout", "edit-roster", "create-roster"],
+        enum: ["login", "logout", "edit-roster", "create-roster", "delete-roster"],
         required: true,
     },
 
@@ -18,6 +19,10 @@ const auditTrailSchema = mongoose.Schema({
     documentId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "roster"
+    },
+
+    deletedDocumentDate: {
+        type: Date,
     },
 }, { timestamps: true })
 

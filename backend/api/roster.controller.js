@@ -1,12 +1,11 @@
 const { date } = require("joi")
 const Joi = require("joi")
-const Roster = require("../models/roster.js")
-const { rosterValidation, rosterQueryValidation, massCreateValidation } = require("../validation.js")
-const { createTrail } = require("./auditTrail.controller")
+const RostersList = require("../models/roster.js")
+const { addRosterListValidation, rosterQueryValidation, massCreateValidation, deleteRosterValidation } = require("../validation.js")
 const formidable = require('formidable');
 const XLSX = require("xlsx");
-const { convert_to_json } = require("./roster.handlers.js")
-
+const { convert_to_json, createNewRoster, findTypes, editRoster, appendRoster } = require("./roster.handlers.js");
+const { createTrail } = require("./auditTrail.controller")
 
 class RosterController {
 
@@ -14,8 +13,10 @@ class RosterController {
         const form = new formidable.IncomingForm({ multiples: true });
         let rosters = []
         form.parse(req, (err, fields, files) => {
-            const entries = files["Upload Excel"]
+
+            const entries = files["Upload Excel"].length ? files["Upload Excel"] : [files["Upload Excel"]]
             // Loop through all workbooks
+
             for (let i = 0; i < entries.length; i++) {
                 let roster = []
                 const f = entries[i];
@@ -28,109 +29,118 @@ class RosterController {
                     rosters.push(roster)
                 }
             }
-
-            return res.json({ message: "success", rosters: rosters });
+            //TODO: validate roster to be correct
+            return res.json({ message: "Convert success", rosters: rosters });
 
         });
 
     }
 
     static async viewRoster(req, res, next) {
-        //TODO: group and push
-        // const query = { date: req.query.date, staffType: req.query.staffType }
-        // const validationError = rosterQueryValidation(query).error
-        // if (validationError)
-        //     return res.status(400).json({ message: validationError.details[0].message })
-        // Roster.aggregate([
-        //     { $match: { date: new Date(query.date) } },
-        //     { $unwind: "$roster" },
-        //     ...(query.staffType ? [{
-        //         $match: {
-        //             "roster.staffType": query.staffType,
-        //         },
-        //     }] : []),
-        //     {
-        //         $sort: {
-        //             "roster.assignment": 1, "roster.shift": 1
-        //         }
-        //     },
-        //     { $replaceWith: "$roster" },
-        // ]).exec((err, result) => {
-        //     return res.json(result)
 
-        // });
+        const validationError = rosterQueryValidation(req.query).error
+        if (validationError)
+            return res.status(400).json({ message: validationError.details[0].message })
+        const result = await RostersList.findOne({ date: new Date(req.query.date) }).exec();
+        if (result)
+            return res.json(result.rosters)
+        return res.json([])
     }
 
-    static massCreateRoster(req, res, next) {
-        //TODO:
+    static async massCreateRoster(req, res, next) {
         const validationError = massCreateValidation(req.body).error
-        console.log(req.body)
         if (validationError)
             return res.status(400).json({ message: validationError.details[0].message })
 
         const rosters = req.body.rosters
         const username = req.body.username
-        rosters.forEach(async function addRoster(roster) {
-            const types = await Roster.find({ date: roster.date }).distinct("roster.staffType")
-            if (types.length === 0) {
-                console.log(0)
-                //Make new
-            } else if (types.includes(roster.roster[0].staffType)) {
-                console.log(roster.roster[0].staffType)
-                // Append
-            } else {
-                // Edit
-                console.log(roster.roster[0].staffType)
+        for (let i = 0; i < rosters.length; i++) {
+            const roster = rosters[i]
+            try {
+                const types = await findTypes(roster.date)
+                if (types.length === 0) {
+                    //Make new
+                    await createNewRoster(username, roster.date, roster.rosters)
+                } else if (types.includes(roster.rosters[0].staffType)) {
+                    //Edit
+                    await editRoster(username, roster.date, roster.rosters)
+                } else {
+                    // Append
+                    await appendRoster(username, roster.date, roster.rosters)
+                }
             }
-        });
+            catch (err) {
+                return res.status(500).json({ message: err.message })
+            }
+        }
+
 
         return res.json({ message: "Mass Roster Created" })
 
     }
 
     static async createRoster(req, res, next) {
-        //TODO:
-        // const roster = req.body
-        // const validationError = addRosterValidation(roster).error
+        const validationError = addRosterListValidation(req.body).error
+        if (validationError)
+            return res.status(400).json({ message: validationError.details[0].message })
 
-        // if (validationError)
-        //     return res.status(400).json({ message: validationError.details[0].message })
+        try {
+            await createNewRoster(req.body.username, req.body.date, req.body.rosters)
+        }
+        catch (err) {
+            return res.status(500).json({ message: err.message })
+        }
 
-        // const newRoster = new Roster({
-        //     date: roster.date,
-        //     roster: roster.roster
-        // })
-
-        // newRoster.save()
-
-        // //Audit
-        // try {
-        //     createTrail({
-        //         username: roster.username, type: "create-roster", documentId: newRoster._id.toString()
-        //     })
-        // }
-        // catch (err) {
-        //     return res.status(500).json({ message: err.message })
-        // }
-        // return res.json({ message: "Roster Created" })
+        return res.json({ message: "Roster Created" })
 
     }
 
     static async getTypes(req, res, next) {
-        //TODO:
-        // const date = new Date(req.query.date)
-        // if (!req.query.date)
-        //     return res.status(400).json({ message: "query date is required" })
-        // if (!date)
-        //     return res.status(400).json({ message: "date is invalid" })
-        // const types = await Roster.find({ date: date }).distinct("roster.staffType")
+        const date = new Date(req.query.date)
+        if (!req.query.date)
+            return res.status(400).json({ message: "query date is required" })
+        if (!date)
+            return res.status(400).json({ message: "date is invalid" })
+        const types = await findTypes(date)
 
-        // return res.json(types)
+        return res.json(types)
     }
 
-    //TODO: Edit Roster 
-    static async editRoster(req, res, next) {
+    static async searchName(req, res, next) {
 
+        const query = { date: req.query.date, staffType: req.query.name }
+        const validationError = rosterQueryValidation(query).error
+        if (validationError)
+            return res.status(400).json({ message: validationError.details[0].message })
+        const result = await RostersList.aggregate([
+            //Some date check 
+            { $unwind: "$rosters" },
+            { $unwind: "$rosters.roster" },
+            {
+
+                $match: {
+                    $or: [{ "rosters.roster.am.name": "ZX NG" }, { "rosters.roster.pm.name": "ZX NG" }]
+
+                }
+            },
+            { $replaceWith: "$rosters" },
+        ])
+
+        return res.json({ message: "Searched", result: result })
     }
+
+    static async deleteRoster(req, res, next) {
+
+        const validationError = deleteRosterValidation(req.body).error
+        if (validationError)
+            return res.status(400).json({ message: validationError.details[0].message })
+        console.log(req.body.date)
+        const result = await RostersList.deleteOne({ date: new Date(req.body.date) }).exec();
+        createTrail({
+            username: req.body.username, type: "delete-roster", deletedDocumentDate: req.body.date
+        })
+        return res.json("Roster deleted")
+    }
+
 }
 module.exports = RosterController

@@ -20,7 +20,8 @@ router.route("/roster/").get(RosterCtrl.viewRoster)
 router.route("/roster/convert").post(RosterCtrl.ExceltoJson)
 router.route("/roster/massCreate").post(RosterCtrl.massCreateRoster)
 router.route("/roster/create").post(RosterCtrl.createRoster)
+router.route("/roster/delete").post(RosterCtrl.deleteRoster)
 router.route("/roster/types").get(RosterCtrl.getTypes)
-//TODO: Edit roster
+// router.route("/roster/search").get(RosterCtrl.searchName)
 
 module.exports = router
