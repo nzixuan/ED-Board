@@ -1,0 +1,13 @@
+.p-datatable-header {
+    font-size: xx-large;
+    font-weight: bolder;
+    text-align: center;
+}
+
+.p-column-title {
+    font-weight: bold;
+}
+
+.p-datatable-table {
+    font-size: large;
+}

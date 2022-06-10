@@ -2,6 +2,7 @@ const express = require("express")
 const User = require("../models/user.js")
 const UserCtrl = require("./user.controller.js")
 const RosterCtrl = require("./roster.controller.js")
+const ConfigCtrl = require("./config.controller.js")
 const { AuditTrailController } = require("./auditTrail.controller.js")
 
 const router = express.Router()
@@ -23,5 +24,10 @@ router.route("/roster/create").post(RosterCtrl.createRoster)
 router.route("/roster/delete").post(RosterCtrl.deleteRoster)
 router.route("/roster/types").get(RosterCtrl.getTypes)
 // router.route("/roster/search").get(RosterCtrl.searchName)
+
+router.route("/config").post(ConfigCtrl.setConfig)
+router.route("/config/boards").get(ConfigCtrl.getBoards)
+
+
 
 module.exports = router

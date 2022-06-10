@@ -18,15 +18,16 @@ const convert_to_json = (sheet) => {
 
         for (let y = 3; y < jsa.length; y++) {
             const row = jsa[y]
-            let temp = {
-                assignment: row[0]
-            }
             if (!row[0])
                 continue
+            let temp = {
+                assignment: row[0].trim()
+            }
+
             for (let x = 1; x < row.length; x++) {
                 //TODO: Handle notes and times
                 if (row[x])
-                    temp[formatShift(jsa[1][x])] = { name: row[x] }
+                    temp[formatShift(jsa[1][x])] = { name: row[x].trim() }
             }
             if (Object.keys(temp).length > 1)
                 roster.push(temp)
@@ -46,10 +47,11 @@ const convert_to_json = (sheet) => {
                         break;
                     //TODO: Handle notes and times and multiple names in 1 row
                     if (cell) {
-                        const assignment = jsa[y][0]
-                        if (!roster[assignment])
-                            roster[assignment] = { assignment: assignment }
-                        roster[assignment][formatShift(shift)] = { name: cell }
+                        const assignment = jsa[y][0].trim()
+                        if (!roster[y])
+                            roster[y] = { assignment: assignment }
+
+                        roster[y][formatShift(shift)] = { name: cell.trim() }
                     }
                 }
             } else if (jsa[2][x] && jsa[2][x].trim() === "RN/AN") {
@@ -62,11 +64,11 @@ const convert_to_json = (sheet) => {
                     if (!cell)
                         continue;
                     if (cell.charAt(0) === '*') {
-                        assignment = cell.substring(1)
+                        assignment = cell.substring(1).trim()
                     } else if (assignment) {
-                        if (!roster[assignment])
-                            roster[assignment] = { assignment: assignment }
-                        roster[assignment][formatShift(shift)] = { name: cell }
+                        if (!roster[y])
+                            roster[y] = { assignment: assignment }
+                        roster[y][formatShift(shift)] = { name: cell.trim() }
                     }
                 }
             }

@@ -23,7 +23,8 @@ rosterSchema = mongoose.Schema({
     am: staffSchema,
     pm: staffSchema,
     straddle1: staffSchema,
-    straddle2: staffSchema
+    straddle2: staffSchema,
+    nd: staffSchema
 
 }, { _id: false })
 

@@ -8,7 +8,7 @@ const auditTrailSchema = mongoose.Schema({
     },
     type: {
         type: String,
-        enum: ["login", "logout", "edit-roster", "create-roster", "delete-roster"],
+        enum: ["login", "logout", "edit-roster", "create-roster", "delete-roster", "edit-config"],
         required: true,
     },
 

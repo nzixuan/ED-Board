@@ -1,6 +1,7 @@
 const Joi = require("joi")
 Joi.objectId = require('joi-objectid')(Joi)
 
+//User
 
 const registerSchema = Joi.object({
     username: Joi.string().min(4).max(30).alphanum().required(),
@@ -22,9 +23,11 @@ const loginValidation = (data => {
     return loginSchema.validate(data);
 })
 
+//Audit
+
 const auditSchema = Joi.object({
     username: Joi.string().required(),
-    type: Joi.string().required().valid("login", "logout", "edit-roster", "create-roster", "delete-roster"),
+    type: Joi.string().required().valid("login", "logout", "edit-roster", "create-roster", "delete-roster", "edit-config"),
     delta: Joi.object(),
     documentId: Joi.objectId(),
     deletedDocumentDate: Joi.date()
@@ -33,6 +36,8 @@ const auditSchema = Joi.object({
 const auditValidation = (data => {
     return auditSchema.validate(data);
 })
+
+//Roster
 
 const staffSchema = Joi.object({
     name: Joi.string().required(),
@@ -67,6 +72,7 @@ const addRosterListValidation = (data => {
 
 const rosterQuerySchema = Joi.object({
     date: Joi.date().required(),
+    board: Joi.string(),
 })
 
 const rosterQueryValidation = (data => {
@@ -95,6 +101,19 @@ const massCreateValidation = (data => {
     return massCreateSchema.validate(data)
 })
 
+
+//Config
+
+const configSchema = Joi.object({
+    username: Joi.string().required(),
+    boards: Joi.object().required(),
+    boardNames: Joi.object().required()
+})
+
+const configValidation = (data => {
+    return configSchema.validate(data)
+})
+
 module.exports = {
     registrationValidation: registrationValidation,
     loginValidation: loginValidation,
@@ -102,5 +121,6 @@ module.exports = {
     addRosterListValidation: addRosterListValidation,
     rosterQueryValidation: rosterQueryValidation,
     massCreateValidation: massCreateValidation,
-    deleteRosterValidation: deleteRosterValidation
+    deleteRosterValidation: deleteRosterValidation,
+    configValidation: configValidation
 }

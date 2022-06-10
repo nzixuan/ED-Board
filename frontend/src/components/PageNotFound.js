@@ -32,7 +32,7 @@ class PageNotFound extends Component {
         return (
             <div className="h-screen -my-12 flex flex-col items-center justify-center">
                 <p className="text-white p-5 text-3xl sm:text-5xl font-extrabold">Page Not Found</p>
-                <Link to="/home/dsho/zixuan/ED-Board/frontend/src/components/" className="text-2xl underline text-green-400">Return Home</Link>
+                <Link to="/" className="text-2xl underline text-green-400">Return Home</Link>
                 {/* <img className="p-5" src={pagenotfound} alt="404 Error" /> */}
                 <h1>{this.state.audits.length}</h1>
             </div>

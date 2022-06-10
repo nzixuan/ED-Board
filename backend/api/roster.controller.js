@@ -6,6 +6,7 @@ const formidable = require('formidable');
 const XLSX = require("xlsx");
 const { convert_to_json, createNewRoster, findTypes, editRoster, appendRoster } = require("./roster.handlers.js");
 const { createTrail } = require("./auditTrail.controller")
+const ConfigCtrl = require("./config.controller.js")
 
 class RosterController {
 
@@ -41,10 +42,27 @@ class RosterController {
         const validationError = rosterQueryValidation(req.query).error
         if (validationError)
             return res.status(400).json({ message: validationError.details[0].message })
-        const result = await RostersList.findOne({ date: new Date(req.query.date) }).exec();
-        if (result)
+        // const result = await RostersList.findOne({ date: new Date(req.query.date) }).exec();
+
+        const result = await RostersList.findOne({ date: new Date(req.query.date) })
+        if (!req.query.board)
             return res.json(result.rosters)
-        return res.json([])
+
+        const assignments = await ConfigCtrl.getBoardAssignments(req.query.board)
+        if (!assignments)
+            return res.status(400).json({ message: "Config not found" })
+
+        if (!result)
+            return res.json([])
+
+        for (let i = 0; i < result.rosters.length; i++) {
+            const roster = result.rosters[i]
+            const assignmentSet = new Set(assignments[roster.staffType])
+            roster.roster = roster.roster.filter((staff) => { return assignmentSet.has(staff.assignment.trim()) })
+        }
+
+
+        return res.json(result.rosters)
     }
 
     static async massCreateRoster(req, res, next) {
@@ -120,7 +138,6 @@ class RosterController {
 
                 $match: {
                     $or: [{ "rosters.roster.am.name": "ZX NG" }, { "rosters.roster.pm.name": "ZX NG" }]
-
                 }
             },
             { $replaceWith: "$rosters" },
@@ -136,9 +153,14 @@ class RosterController {
             return res.status(400).json({ message: validationError.details[0].message })
         console.log(req.body.date)
         const result = await RostersList.deleteOne({ date: new Date(req.body.date) }).exec();
-        createTrail({
-            username: req.body.username, type: "delete-roster", deletedDocumentDate: req.body.date
-        })
+        try {
+            createTrail({
+                username: req.body.username, type: "delete-roster", deletedDocumentDate: req.body.date
+            })
+        }
+        catch (err) {
+            return res.status(500).json({ message: err.message })
+        }
         return res.json("Roster deleted")
     }
 
