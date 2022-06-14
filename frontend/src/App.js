@@ -5,6 +5,7 @@ import PageNotFound from './components/PageNotFound';
 import ProtectedRoute from './components/ProtectedRoute';
 import Home from './components/Home'
 import SignIn from "./components/SignIn";
+import LandingPage from "./components/LandingPage";
 import { UserProvider } from "./context/UserContext";
 import CreateRoster from "./components/CreateRoster";
 import Board from "./components/Board"
@@ -21,6 +22,7 @@ function App() {
       <UserProvider>
         <BrowserRouter>
           <Routes>
+            <Route exact path="/" element={<LandingPage boards={boards} />} />
             <Route exact path="/login" element={<SignIn />} />
             <Route path="/admin" element={<ProtectedRoute />}>
               <Route path="" element={<Home />} />

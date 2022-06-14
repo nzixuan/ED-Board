@@ -1,6 +1,6 @@
 .p-datatable-header {
-    font-size: xx-large;
-    font-weight: bolder;
+    font-size: 90%;
+    /* font-weight: bold; */
     text-align: center;
 }
 
@@ -9,5 +9,6 @@
 }
 
 .p-datatable-table {
-    font-size: large;
+    font-size: 80%;
+    max-height: 80vh;
 }

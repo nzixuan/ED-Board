@@ -57,6 +57,7 @@ class RosterController {
 
         for (let i = 0; i < result.rosters.length; i++) {
             const roster = result.rosters[i]
+
             const assignmentSet = new Set(assignments[roster.staffType])
             roster.roster = roster.roster.filter((staff) => { return assignmentSet.has(staff.assignment.trim()) })
         }
@@ -151,7 +152,6 @@ class RosterController {
         const validationError = deleteRosterValidation(req.body).error
         if (validationError)
             return res.status(400).json({ message: validationError.details[0].message })
-        console.log(req.body.date)
         const result = await RostersList.deleteOne({ date: new Date(req.body.date) }).exec();
         try {
             createTrail({

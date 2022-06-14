@@ -1,21 +1,22 @@
 import React, { Component } from "react";
 import axios from 'axios'
-import { DataTable } from 'primereact/datatable';
-import { Column } from 'primereact/column';
-import { Link } from 'react-router-dom'
 
 import 'primereact/resources/themes/saga-blue/theme.css';
 import 'primereact/resources/primereact.min.css';
 import 'primeicons/primeicons.css';
 import 'primeflex/primeflex.css';
 import Table from "./Table";
-
+import BoardHeader from "./ BoardHeader";
+import 'roboto-fontface/css/roboto/roboto-fontface.css'
+import "./Board.css"
 class Board extends Component {
     constructor(props) {
         super(props);
         this.state = { rosters: [], time: new Date(0) };
         this.loadData = this.loadData.bind(this);
     }
+
+
 
     async loadData() {
         try {
@@ -55,23 +56,16 @@ class Board extends Component {
 
 
     render() {
+
         return (
             <div className="Board">
-                <div className="flex  justify-content-center align-items-center text-center">
-                    <div className="flex align-items-center position: absolute top-0 left-0 px-8">
-                        <h2 className="">{"05/26/2022"}</h2>
-                        <h3 className="px-5">{"Last updated at " + this.state.time.toLocaleTimeString()}</h3>
-                    </div>
-                    <h1 className="text-2xl">
-                        {this.props.name}
-                    </h1>
-
-                </div>
-                <div className=" flex items-center justify-center h-full w-full flex wrap" >
-
+                <BoardHeader time={this.state.time} name={this.props.name}></BoardHeader>
+                {/* Max height */}
+                <div className=" flex items-center justify-center flex-wrap" >
                     {
                         this.state.rosters.length > 0 && this.state.rosters.map((roster) => {
-                            return <Table roster={roster} key={roster.staffType}></Table>
+                            if (roster.roster.length > 0)
+                                return <Table roster={roster} key={roster.staffType}></Table>
                         })
                     }
 
