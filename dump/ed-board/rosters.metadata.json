@@ -1,0 +1,1 @@
+{"indexes":[{"v":{"$numberInt":"2"},"key":{"_id":{"$numberInt":"1"}},"name":"_id_"},{"v":{"$numberInt":"2"},"key":{"date":{"$numberInt":"-1"}},"name":"date","background":false}],"uuid":"88976536e9a84236a42ec9d65f88bd2e","collectionName":"rosters","type":"collection"}
