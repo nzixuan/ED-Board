@@ -1,3 +1,10 @@
 * {
     font-family: Roboto;
 }
+
+
+div .Board {
+    background-color: white;
+    min-height: 100vh;
+    height: max-content;
+}

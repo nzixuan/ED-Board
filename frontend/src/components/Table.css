@@ -1,7 +1,16 @@
 .p-datatable-header {
     font-size: 90%;
-    /* font-weight: bold; */
     text-align: center;
+    background-color: #f5f5f5 !important;
+}
+
+.striped {
+    background-color: #f5f5f5 !important;
+}
+
+.header {
+    background-color: #f5f5f5 !important;
+
 }
 
 .p-column-title {
@@ -14,3 +23,8 @@
     font-size: 85%;
     max-height: 80vh;
 }
+
+/* 
+.p-datatable .p-datatable-tbody>tr {
+    background: #DCDCDC
+} */

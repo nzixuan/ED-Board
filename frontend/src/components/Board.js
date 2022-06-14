@@ -23,7 +23,6 @@ class Board extends Component {
             //TODO: Remove date
             const data = await axios.get(process.env.REACT_APP_API_URL + '/api/edboard/roster/', { params: { date: "05/26/2022", board: this.props.name } })
             let rosters = data.data.rosters
-            console.log(data.data)
             rosters.sort((a, b) => {
                 if (a.staffType === "doctor") {
                     return -1
@@ -38,8 +37,27 @@ class Board extends Component {
                 }
             })
 
+            //For striped classing
+            rosters.forEach((rosters) => {
+                const roster = rosters.roster
+
+                let previous = null;
+                let alt = "striped";
+                for (let i = 0; i < roster.length; i++) {
+
+                    if (previous !== roster[i].assignment) {
+                        if (alt === "striped") {
+                            alt = "nostriped"
+                        } else {
+                            alt = "striped"
+                        }
+                        previous = roster[i].assignment
+                    }
+                    roster[i]["stripe"] = alt;
+                }
+            });
+
             this.setState({ rosters: rosters, time: data.data.timeString, date: data.data.dateString })
-            console.log(this.state)
         } catch (err) {
             //TODO: Log Error on screen
             // this.setState({ rosters: [] })
