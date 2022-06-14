@@ -5,13 +5,14 @@
 
 
 run  'npm install'
+To run mongodb compass on wsl kill mongodb process on windows and run mongo daemon on wsl
 
 install mongodb and database https://docs.microsoft.com/en-us/windows/wsl/tutorials/wsl-database
 ** shitty version of mongo db for ubuntu 
 
 run mongo daemon ' sudo mongod --dbpath ~/data/db '
+
+sudo systemctl start mongod
 sudo systemctl status mongod
-
-To run mongodb compass on wsl kill mongodb process on windows and run mongo daemon on wsl
-
 edit .env files
+
