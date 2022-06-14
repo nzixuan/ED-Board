@@ -6,7 +6,8 @@ const formidable = require('formidable');
 const XLSX = require("xlsx");
 const { convert_to_json, createNewRoster, findTypes, editRoster, appendRoster } = require("./roster.handlers.js");
 const { createTrail } = require("./auditTrail.controller")
-const ConfigCtrl = require("./config.controller.js")
+const ConfigCtrl = require("./config.controller.js");
+const { ConnectionStates } = require("mongoose");
 
 class RosterController {
 
@@ -42,9 +43,13 @@ class RosterController {
         const validationError = rosterQueryValidation(req.query).error
         if (validationError)
             return res.status(400).json({ message: validationError.details[0].message })
-        // const result = await RostersList.findOne({ date: new Date(req.query.date) }).exec();
+        const weekday = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
-        const result = await RostersList.findOne({ date: new Date(req.query.date) })
+        let date = new Date()
+        if (req.query.date)
+            date = new Date(req.query.date)
+
+        let result = await RostersList.findOne({ date: date })
         if (!req.query.board)
             return res.json(result.rosters)
 
@@ -53,7 +58,10 @@ class RosterController {
             return res.status(400).json({ message: "Config not found" })
 
         if (!result)
-            return res.json([])
+            return res.json({
+                rosters: [], timeString: new Date().toLocaleTimeString(),
+                dateString: weekday[date.getDay()] + ", " + date.toLocaleDateString('en-GB')
+            })
 
         for (let i = 0; i < result.rosters.length; i++) {
             const roster = result.rosters[i]
@@ -63,7 +71,10 @@ class RosterController {
         }
 
 
-        return res.json(result.rosters)
+        return res.json({
+            rosters: result.rosters, timeString: new Date().toLocaleTimeString(),
+            dateString: weekday[date.getDay()] + ", " + date.toLocaleDateString('en-GB')
+        })
     }
 
     static async massCreateRoster(req, res, next) {

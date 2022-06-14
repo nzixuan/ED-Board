@@ -24,16 +24,16 @@ export default function Table(props) {
                 props.roster &&
                 < DataTable value={props.roster["roster"]} header={(props.roster.staffType).toUpperCase()} responsiveLayout="scroll"
                     showGridlines stripedRows rowGroupMode="rowspan" groupRowsBy="assignment" size="small">
-                    <Column className="py-0 px-2 font-bold " field="assignment" header="Assignment" ></Column>
-                    <Column className="py-0 px-2" header="AM" body={nameTemplate("am")} ></Column>
+                    <Column className="py-2 px-1 font-bold " field="assignment" header="Assignment" ></Column>
+                    <Column className="py-1 px-1" header="AM" body={nameTemplate("am")} ></Column>
                     {props.roster.staffType === "doctor" &&
-                        <Column className="py-0 px-2" header="Straddle" body={nameTemplate("straddle1")}></Column>
+                        <Column className="py-1 px-1" header="Straddle" body={nameTemplate("straddle1")}></Column>
                     }
-                    <Column className="py-0 px-2" header="PM" body={nameTemplate("pm")}></Column>
+                    <Column className="py-1 px-1" header="PM" body={nameTemplate("pm")}></Column>
                     {props.roster.staffType === "doctor" &&
-                        <Column className="py-0 px-2" header="Straddle" body={nameTemplate("straddle2")}></Column>
+                        <Column className="py-1 px-1" header="Straddle" body={nameTemplate("straddle2")}></Column>
                     }
-                    <Column className="py-0 px-2" header="ND" body={nameTemplate("nd")}></Column>
+                    <Column className="py-1 px-1" header="ND" body={nameTemplate("nd")}></Column>
                 </DataTable>
             }
         </div >

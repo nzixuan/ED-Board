@@ -71,7 +71,7 @@ const addRosterListValidation = (data => {
 })
 
 const rosterQuerySchema = Joi.object({
-    date: Joi.date().required(),
+    date: Joi.date(),
     board: Joi.string(),
 })
 

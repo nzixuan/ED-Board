@@ -12,7 +12,7 @@ import "./Board.css"
 class Board extends Component {
     constructor(props) {
         super(props);
-        this.state = { rosters: [], time: new Date(0) };
+        this.state = { rosters: [], time: "-", date: "-" };
         this.loadData = this.loadData.bind(this);
     }
 
@@ -20,10 +20,10 @@ class Board extends Component {
 
     async loadData() {
         try {
-            //TODO: Change date
+            //TODO: Remove date
             const data = await axios.get(process.env.REACT_APP_API_URL + '/api/edboard/roster/', { params: { date: "05/26/2022", board: this.props.name } })
-            console.log(data)
-            let rosters = data.data
+            let rosters = data.data.rosters
+            console.log(data.data)
             rosters.sort((a, b) => {
                 if (a.staffType === "doctor") {
                     return -1
@@ -38,7 +38,8 @@ class Board extends Component {
                 }
             })
 
-            this.setState({ rosters: rosters, time: new Date() })
+            this.setState({ rosters: rosters, time: data.data.timeString, date: data.data.dateString })
+            console.log(this.state)
         } catch (err) {
             //TODO: Log Error on screen
             // this.setState({ rosters: [] })
@@ -59,7 +60,7 @@ class Board extends Component {
 
         return (
             <div className="Board">
-                <BoardHeader time={this.state.time} name={this.props.name}></BoardHeader>
+                <BoardHeader time={this.state.time} date={this.state.date} name={this.props.name}></BoardHeader>
                 {/* Max height */}
                 <div className=" flex items-center justify-center flex-wrap" >
                     {
