@@ -1,9 +1,9 @@
 import React, { useContext } from "react";
-import { UserContext } from "../context/UserContext";
+import { UserContext } from "../../context/UserContext";
 import { Button } from 'primereact/button';
 import { useNavigate } from "react-router-dom";
 
-function Home() {
+function AdminView() {
     const [user,] = useContext(UserContext)
     const navigate = useNavigate();
 
@@ -16,11 +16,11 @@ function Home() {
                 <div>
                     <Button label="Create/Edit Roster" icon="pi pi-plus" className="w-full mb-6" onClick={() => navigate("/admin/create")} />
                     <Button label="Delete Roster" icon="pi pi-pencil" className="w-full mb-6" />
-                    <Button label="View Audit Trail" icon="pi pi-database" className="w-full mb-6" />
+                    <Button label="View Audit Trail" icon="pi pi-database" className="w-full mb-6" onClick={() => navigate("/admin/audit")} />
                 </div>
             </div>
         </div>
     )
 }
 
-export default Home;
+export default AdminView;

@@ -1,18 +1,6 @@
 import React from "react";
-import { DataTable } from 'primereact/datatable';
 import { TabView, TabPanel } from 'primereact/tabview';
-import Table from "./Table";
-import { Column } from 'primereact/column';
-
-import './Table.css'
-
-function nameTemplate(field) {
-    return (rowData) => {
-        if (rowData.hasOwnProperty(field))
-            return rowData[field].name;
-        return ""
-    }
-}
+import Table from "../Table";
 
 export default function PreviewAddTabs(props) {
     return (<TabView scrollable>

@@ -2,14 +2,15 @@ import React from "react";
 import { useState, useEffect } from 'react';
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import PageNotFound from './components/PageNotFound';
-import ProtectedRoute from './components/ProtectedRoute';
-import Home from './components/Home'
+import ProtectedRoute from './components/admin/ProtectedRoute';
+import AdminView from './components/admin/AdminView'
 import SignIn from "./components/SignIn";
 import LandingPage from "./components/LandingPage";
 import { UserProvider } from "./context/UserContext";
-import CreateRoster from "./components/CreateRoster";
+import CreateRoster from "./components/admin/CreateRoster";
 import Board from "./components/Board"
 import axios from "axios";
+import AuditTrailView from "./components/admin/AuditTrailView";
 
 function App() {
   const [boards, setBoards] = useState([]);
@@ -25,8 +26,9 @@ function App() {
             <Route exact path="/" element={<LandingPage boards={boards} />} />
             <Route exact path="/login" element={<SignIn />} />
             <Route path="/admin" element={<ProtectedRoute />}>
-              <Route path="" element={<Home />} />
+              <Route path="" element={<AdminView />} />
               <Route path="create" element={<CreateRoster />} />
+              <Route path="audit" element={<AuditTrailView />} />
               <Route path="*" element={<PageNotFound />} />
             </Route>
             < Route path="/create" element={<CreateRoster />} />

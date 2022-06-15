@@ -18,15 +18,18 @@ class AuditTrailController {
         let audits = []
         let filters = {}
         let totalNum = 0
-        const date = new Date(req.query.date)
-        const endDate = new Date(req.query.date)
-        endDate.setDate(endDate.getDate() + 1)
+        if (req.query.date) {
+            const date = new Date(req.query.date)
+            const endDate = new Date(req.query.date)
+            endDate.setDate(endDate.getDate() + 1)
 
-        filters = {
-            createdAt: { $gt: date, $lt: endDate }
+            filters = {
+                createdAt: { $gt: date, $lt: endDate }
+            }
         }
+
         try {
-            audits = await auditTrail.find(filters).limit(auditPerPage).skip(auditPerPage * page)
+            audits = await auditTrail.find(filters).sort('-createdAt').populate('documentId', "date").limit(auditPerPage).skip(auditPerPage * page)
             totalNum = await auditTrail.countDocuments(filters)
         } catch (e) {
             console.error('Unable to issue command', e.message)

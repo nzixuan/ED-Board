@@ -5,15 +5,20 @@ import { useState } from 'react';
 import { FileUpload } from 'primereact/fileupload';
 import { Messages } from 'primereact/messages';
 import axios from "axios";
-import { UserContext } from "../context/UserContext";
+import { UserContext } from "../../context/UserContext";
 
 import 'primereact/resources/themes/saga-blue/theme.css';
 import 'primereact/resources/primereact.min.css';
 import 'primeicons/primeicons.css';
 import 'primeflex/primeflex.css';
 import PreviewAddTabs from "./PreviewAddTabs";
+import { useNavigate } from "react-router-dom";
+
 
 export default function CreateRoster() {
+
+    const navigate = useNavigate();
+
     const [user,] = useContext(UserContext)
 
     const message = useRef(null);
@@ -25,7 +30,7 @@ export default function CreateRoster() {
 
     const handleError = (event) => {
         if (event.xhr.response) {
-            const err = JSON.parse(event.xhr.response)
+            // const err = JSON.parse(event.xhr.response)
             console.log(event.xhr.response)
             message.current.show({ severity: 'error', summary: '', detail: "Invalid input format" });
 
@@ -40,6 +45,8 @@ export default function CreateRoster() {
     async function handleSubmit() {
         try {
             await axios.post(process.env.REACT_APP_API_URL + '/api/edboard/roster/massCreate', { username: user.username, rosters: rostersList })
+            navigate("/admin")
+
             setRostersList([])
 
         } catch (err) {

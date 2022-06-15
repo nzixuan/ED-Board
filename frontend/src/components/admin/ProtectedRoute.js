@@ -1,7 +1,7 @@
 import React, { useContext, useState, useEffect } from "react";
 import { Navigate, Outlet } from "react-router-dom";
 import axios from 'axios'
-import { UserContext } from "../context/UserContext";
+import { UserContext } from "../../context/UserContext";
 
 function ProtectedRoute({ children }) {
 
