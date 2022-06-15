@@ -1,7 +1,6 @@
 import React from "react";
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
-import { useNavigate } from "react-router-dom";
 
 import './Table.css'
 
@@ -11,9 +10,6 @@ function nameTemplate(field) {
             return rowData[field].name;
         return ""
     }
-}
-function capitalizeFirstLetter(string) {
-    return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
 export default function Table(props) {

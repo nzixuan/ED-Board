@@ -85,6 +85,7 @@ class Board extends Component {
                         this.state.rosters.length > 0 && this.state.rosters.map((roster) => {
                             if (roster.roster.length > 0)
                                 return <Table roster={roster} key={roster.staffType}></Table>
+                            return null
                         })
                     }
 

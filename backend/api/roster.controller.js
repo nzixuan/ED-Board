@@ -28,10 +28,18 @@ class RosterController {
                 for (let j = 0; j < workbook.SheetNames.length; j++) {
                     const name = workbook.SheetNames[j]
                     roster = convert_to_json(workbook.Sheets[name], date)
-                    rosters.push(roster)
+
+                    console.log(roster)
+
+                    const validationError = addRosterListValidation({ username: "admin", ...roster }).error
+                    if (validationError)
+                        return res.status(400).json({ message: validationError.details[0].message, rosters: [] })
+                    if (roster.rosters[0].roster.length > 0)
+                        rosters.push(roster)
                 }
             }
-            //TODO: validate roster to be correct
+            if (rosters.length === 0)
+                return res.status(400).json({ message: "Empty roster", rosters: [] })
             return res.json({ message: "Convert success", rosters: rosters });
 
         });

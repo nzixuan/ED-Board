@@ -73,9 +73,14 @@ const convert_to_json = (sheet) => {
                 }
             }
         }
+
+
         rosters.roster = Object.values(roster)
     }
+
+
     json.rosters = [rosters]
+
     return json
 }
 

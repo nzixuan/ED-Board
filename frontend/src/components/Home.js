@@ -4,7 +4,7 @@ import { Button } from 'primereact/button';
 import { useNavigate } from "react-router-dom";
 
 function Home() {
-    const [user, setUser] = useContext(UserContext)
+    const [user,] = useContext(UserContext)
     const navigate = useNavigate();
 
     return (

@@ -24,9 +24,11 @@ export default function SignIn() {
                 navigate("/admin")
             }).catch((err) => {
                 console.log(err)
-                if (err.response.data)
+                if (err.response.data) {
                     message.current.show({ severity: 'error', summary: '', detail: err.response.data.message });
-
+                } else {
+                    message.current.show({ severity: 'error', summary: '', detail: "Server Error" });
+                }
                 setState({ username: '', password: '' })
             })
     };
