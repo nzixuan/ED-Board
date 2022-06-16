@@ -15,7 +15,7 @@ function AdminView() {
                 </div>
                 <div>
                     <Button label="Create/Edit Roster" icon="pi pi-plus" className="w-full mb-6" onClick={() => navigate("/admin/create")} />
-                    <Button label="Delete Roster" icon="pi pi-pencil" className="w-full mb-6" />
+                    <Button label="Edit Configurations" icon="pi pi-pencil" className="w-full mb-6" onClick={() => navigate("/admin/config")} />
                     <Button label="View Audit Trail" icon="pi pi-database" className="w-full mb-6" onClick={() => navigate("/admin/audit")} />
                 </div>
             </div>

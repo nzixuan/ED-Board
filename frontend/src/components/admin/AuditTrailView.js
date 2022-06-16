@@ -19,19 +19,48 @@ function documentTemplate(rowData) {
 export default function AuditTrailView(props) {
 
     const [audits, setAudits] = useState([]);
-    useEffect(() => {
-        axios.get(process.env.REACT_APP_API_URL + '/api/edboard/audit').then((res) => {
+    const [loading, setLoading] = useState(false);
+    const [totalRecords, setTotalRecords] = useState(0);
+
+
+    const [lazyParams, setLazyParams] = useState({
+        first: 0,
+        rows: 15,
+        page: 1,
+    });
+
+
+    const onPage = (event) => {
+        setLazyParams(event);
+    }
+
+    const loadLazyData = () => {
+        setLoading(true);
+        axios.get(process.env.REACT_APP_API_URL + '/api/edboard/audit', { params: { auditsPerPage: lazyParams.rows, page: lazyParams.page } }).then((res) => {
             console.log(res.data)
+            setTotalRecords(res.data.total_result);
             setAudits(res.data.audits)
-        }).catch((err) => { setAudits([]) })
-    }, []);
+            setLoading(false);
+
+        }).catch((err) => {
+            setAudits([])
+            setTotalRecords(0);
+            setLoading(false);
+        })
+    }
+
+
+    useEffect(() => {
+        loadLazyData()
+    }, [lazyParams]);
 
     return (
-        <div className="Card" >
+        <div className="flex justify-content-center" >
             {
                 audits.length > 0 &&
-                < DataTable className="Table" value={audits} header="Audit Trail" responsiveLayout="scroll"
-                    showGridlines stripedRows size="small" >
+                < DataTable className=" w-8" value={audits} header="Audit Trail" responsiveLayout="scroll"
+                    showGridlines stripedRows size="small" lazy paginator first={lazyParams.first} rows={lazyParams.rows} totalRecords={totalRecords}
+                    onPage={onPage} >
                     <Column className="py-2 px-1 font-bold " field="username" header="User" headerClassName="header"></Column>
                     <Column className="py-1 px-1" header="Operation Time" body={dateTemplate} headerClassName="header"></Column>
                     <Column className="py-1 px-1" field="type" header="Operation Type" headerClassName="header"></Column>

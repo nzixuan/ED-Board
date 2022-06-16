@@ -26,6 +26,8 @@ router.route("/roster/types").get(RosterCtrl.getTypes)
 // router.route("/roster/search").get(RosterCtrl.searchName)
 
 router.route("/config").post(ConfigCtrl.setConfig)
+router.route("/config").get(ConfigCtrl.getConfig)
+
 router.route("/config/boards").get(ConfigCtrl.getBoards)
 
 

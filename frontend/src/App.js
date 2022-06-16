@@ -8,6 +8,7 @@ import SignIn from "./components/SignIn";
 import LandingPage from "./components/LandingPage";
 import { UserProvider } from "./context/UserContext";
 import CreateRoster from "./components/admin/CreateRoster";
+import ConfigView from "./components/admin/ConfigView"
 import Board from "./components/Board"
 import axios from "axios";
 import AuditTrailView from "./components/admin/AuditTrailView";
@@ -29,6 +30,7 @@ function App() {
               <Route path="" element={<AdminView />} />
               <Route path="create" element={<CreateRoster />} />
               <Route path="audit" element={<AuditTrailView />} />
+              <Route path="config" element={<ConfigView />} />
               <Route path="*" element={<PageNotFound />} />
             </Route>
             < Route path="/create" element={<CreateRoster />} />

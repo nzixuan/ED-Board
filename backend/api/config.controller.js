@@ -21,6 +21,14 @@ class ConfigController {
         return config.boards[board]
     }
 
+    static async getConfig(req, res, next) {
+        const config = await Config.findOne().exec()
+
+        if (!config)
+            return res.json({})
+        return res.json(config)
+    }
+
     static async setConfig(req, res, next) {
         const validationError = configValidation(req.body).error
         if (validationError)
