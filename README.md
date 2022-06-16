@@ -14,5 +14,4 @@ run mongo daemon ' sudo mongod --dbpath ~/data/db '
 
 sudo systemctl start mongod
 sudo systemctl status mongod
-edit .env files
-
+edit .env file
