@@ -12,6 +12,7 @@ import ConfigView from "./components/admin/ConfigView"
 import Board from "./components/Board"
 import axios from "axios";
 import AuditTrailView from "./components/admin/AuditTrailView";
+import TopNavBar from "./components/admin/TopNavBar";
 
 function App() {
   const [boards, setBoards] = useState([]);

@@ -11,7 +11,7 @@ export default function LandingPage(props) {
     const navigate = useNavigate();
 
     return (<div className="flex flex-column justify-content-center align-items-center text-center">
-        <h1 className="text-3xl">
+        <h1 className="text-3xl cursor-pointer" onClick={() => navigate("/admin")}>
             ED Board
         </h1>
 

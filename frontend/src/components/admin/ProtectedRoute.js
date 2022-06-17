@@ -2,6 +2,9 @@ import React, { useContext, useState, useEffect } from "react";
 import { Navigate, Outlet } from "react-router-dom";
 import axios from 'axios'
 import { UserContext } from "../../context/UserContext";
+import TopNavBar from "./TopNavBar";
+import SideNavBar from "./SideNavBar";
+
 
 function ProtectedRoute({ children }) {
 
@@ -26,7 +29,12 @@ function ProtectedRoute({ children }) {
     if (loggedIn == null)
         return null
 
-    return loggedIn ? <Outlet /> : <Navigate to="/login" />;
+    return loggedIn ? (<div><TopNavBar />
+        <div className="flex h-screen pt-5">
+            <SideNavBar></SideNavBar>
+            <div className="flex-grow-1 " style={{ paddingLeft: '8rem' }}>
+                <Outlet /></div></div>
+    </div >) : <Navigate to="/login" />;
 }
 
 export default ProtectedRoute;
