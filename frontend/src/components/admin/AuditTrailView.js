@@ -25,7 +25,7 @@ export default function AuditTrailView(props) {
 
     const [lazyParams, setLazyParams] = useState({
         first: 0,
-        rows: 15,
+        rows: 10,
         page: 1,
     });
 
@@ -36,7 +36,7 @@ export default function AuditTrailView(props) {
 
     const loadLazyData = () => {
         setLoading(true);
-        axios.get(process.env.REACT_APP_API_URL + '/api/edboard/audit', { params: { auditsPerPage: lazyParams.rows, page: lazyParams.page } }).then((res) => {
+        axios.get(process.env.REACT_APP_API_URL + '/api/edboard/audit', { params: { auditPerPage: lazyParams.rows, page: lazyParams.page } }).then((res) => {
             console.log(res.data)
             setTotalRecords(res.data.total_result);
             setAudits(res.data.audits)
@@ -55,17 +55,19 @@ export default function AuditTrailView(props) {
     }, [lazyParams]);
 
     return (
-        <div className="flex justify-content-center" >
+        <div className="flex h-full align-items-start justify-content-center" >
             {
                 audits.length > 0 &&
-                < DataTable className=" w-8" value={audits} header="Audit Trail" responsiveLayout="scroll"
-                    showGridlines stripedRows size="small" lazy paginator first={lazyParams.first} rows={lazyParams.rows} totalRecords={totalRecords}
-                    onPage={onPage} >
-                    <Column className="py-2 px-1 font-bold " field="username" header="User" headerClassName="header"></Column>
-                    <Column className="py-1 px-1" header="Operation Time" body={dateTemplate} headerClassName="header"></Column>
-                    <Column className="py-1 px-1" field="type" header="Operation Type" headerClassName="header"></Column>
-                    <Column className="py-1 px-1" header="Roster Date" body={documentTemplate} headerClassName="header"></Column>
-                </DataTable>
+                <div className="Card w-8 mt-3">
+                    < DataTable className="h-full" value={audits} header="Audit Trail" responsiveLayout="scroll"
+                        showGridlines stripedRows size="small" lazy paginator first={lazyParams.first} rows={lazyParams.rows} totalRecords={totalRecords}
+                        onPage={onPage} >
+                        <Column className="py-2 px-1 font-bold" field="username" header="User" headerClassName="header"></Column>
+                        <Column className="py-1 px-1" header="Operation Time" body={dateTemplate} headerClassName="header"></Column>
+                        <Column className="py-1 px-1" field="type" header="Operation Type" headerClassName="header"></Column>
+                        <Column className="py-1 px-1" header="Roster Date" body={documentTemplate} headerClassName="header"></Column>
+                    </DataTable>
+                </div>
             }
         </div >
 

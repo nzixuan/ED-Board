@@ -23,14 +23,17 @@
 }
 
 .p-datatable-table {
-    font-size: 85%;
-    max-height: 80vh;
-
+    font-size: 80%;
 }
 
+.p-datatable-wrapper {
+    height: 85%;
+}
 
 .Card {
     margin: 0.5rem;
+    background-color: #FFFFFF !important;
+    height: 80%;
     /* box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2), 0 4px 14px 0 rgba(0, 0, 0, 0.19); */
 
 }
