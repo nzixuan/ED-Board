@@ -17,50 +17,101 @@
     border-width: 1px;
 }
 
-.navigation-button {
-    text-align: left !important;
-    font-size: .875rem !important;
-    width: calc(var(--barWidth) - 1rem) !important;
-    height: 3rem !important;
-    margin-top: 0.25rem !important;
-    margin-bottom: 0.25rem !important;
-    padding-left: 1rem !important;
-    padding-right: 1rem !important;
-    border-color: white !important;
+.topbar {
+    display: flex;
+    align-items: center;
+    justify-content: start;
+    color: var(--surface-900);
+    font-weight: bold;
+    font-size: 100%;
+    background-color: white;
+    height: 3rem;
+    width: calc(var(--barWidth) - 1rem);
+    padding-left: 0.75rem;
+    padding-right: 1rem;
 
 }
 
-.system {
-    color: var(--surface-900) !important;
-    font-weight: bold !important;
-    font-size: 100% !important;
-    background-color: white !important;
+.icon {
+    padding: 0.25rem;
+    margin-right: 0.25rem;
+    cursor: pointer;
+    transition-property: background-color, border-color, color;
+    transition-duration: 150ms;
+    border-radius: 100%;
 }
 
+.icon:hover {
+    background-color: var(--surface-300);
+}
 
-.system:disabled {
-    color: black !important;
+.logo {
+    cursor: pointer;
+}
+
+.icon:active {
+    background-color: var(--surface-500);
 }
 
 .divider {
     margin-top: 0.5rem !important;
-    margin-bottom: 0.5rem !important;
-
+    margin-bottom: 0rem !important;
 
 }
 
+.menu-button {
+    display: flex;
+    align-items: center;
+    justify-content: start;
+    color: var(--surface-900);
+    font-size: .875rem;
+    background-color: white;
+    height: 3rem;
+    width: var(--barWidth);
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+    transition-property: background-color, color;
+    transition-duration: 150ms;
+    cursor: pointer;
+    border: 0px;
+    border-right: 1px;
+    border-color: var(--surface-300);
+    border-style: solid;
 
-.system .p-button-label {
-    font-size: medium;
 }
+
+.menu-icon {
+    margin-right: 0.5rem;
+}
+
+div.menu-button:active {
+    background-color: var(--surface-500);
+
+}
+
+/* 
+.navigation-current:active,
+.navigation-away:active {
+    color: var(--primary-600);
+} */
+
 
 .navigation-current {
-    color: var(--primary-color) !important;
-    background-color: var(--surface-300) !important;
+    color: var(--text-color-secondary);
+    background-color: var(--surface-300);
+}
+
+.navigation-current:hover {
+    background-color: var(--surface-400);
+
 }
 
 .navigation-away {
-    color: var(--text-color-secondary) !important;
-    background-color: white !important;
+    color: var(--text-color-secondary);
+    background-color: white;
 
+}
+
+.navigation-away:hover {
+    background-color: var(--surface-200);
 }
