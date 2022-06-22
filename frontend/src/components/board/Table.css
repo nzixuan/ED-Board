@@ -1,0 +1,47 @@
+/* Assignment Label */
+.p-datatable-header {
+    font-size: 90%;
+    text-align: center;
+    background-color: #FFFFFF !important;
+}
+
+.card {
+    margin: 0.5rem;
+}
+
+.p-datatable-table {
+    font-size: 85%;
+    max-height: 80vh;
+
+}
+
+/* Headings */
+.header {
+    background-color: #eeeeee !important;
+
+}
+
+/* Column Title */
+.p-column-title {
+    font-weight: bold;
+    padding-top: 2px;
+    padding-bottom: 2px;
+}
+
+.data-column {
+    padding: 0.25rem !important;
+}
+
+.assignment-column {
+    padding-top: 0.5rem !important;
+    padding-bottom: 0.5rem !important;
+    padding-top: 0.5rem !important;
+    padding-bottom: 0.5rem !important;
+    font-weight: 700 !important;
+}
+
+/* Striped Label */
+.striped {
+    background-color: #EEEEEE !important;
+
+}

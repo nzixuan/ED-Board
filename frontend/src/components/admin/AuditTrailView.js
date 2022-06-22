@@ -55,22 +55,26 @@ export default function AuditTrailView(props) {
     }, [lazyParams]);
 
     return (
-        <div className="flex h-full align-items-start justify-content-center" >
-            {
-                audits.length > 0 &&
-                <div className="Card w-8 mt-3">
-                    < DataTable className="h-full" value={audits} header="Audit Trail" responsiveLayout="scroll"
-                        showGridlines stripedRows size="small" lazy paginator first={lazyParams.first} rows={lazyParams.rows} totalRecords={totalRecords}
-                        onPage={onPage} >
-                        <Column className="py-2 px-1 font-bold" field="username" header="User" headerClassName="header"></Column>
-                        <Column className="py-1 px-1" header="Operation Time" body={dateTemplate} headerClassName="header"></Column>
-                        <Column className="py-1 px-1" field="type" header="Operation Type" headerClassName="header"></Column>
-                        <Column className="py-1 px-1" header="Roster Date" body={documentTemplate} headerClassName="header"></Column>
-                    </DataTable>
-                </div>
-            }
-        </div >
-
+        <div>
+            <h2 className="heading">
+                Audit Log
+            </h2>
+            <div className="content" >
+                {
+                    audits.length > 0 &&
+                    <div className="card">
+                        < DataTable className="h-full" value={audits} responsiveLayout="scroll"
+                            showGridlines stripedRows size="small" lazy paginator first={lazyParams.first} rows={lazyParams.rows} totalRecords={totalRecords}
+                            onPage={onPage} >
+                            <Column field="username" header="User" headerClassName="header"></Column>
+                            <Column header="Operation Time" body={dateTemplate} headerClassName="header"></Column>
+                            <Column field="type" header="Operation Type" headerClassName="header"></Column>
+                            <Column header="Roster Date" body={documentTemplate} headerClassName="header"></Column>
+                        </DataTable>
+                    </div>
+                }
+            </div >
+        </div>
 
     )
 }

@@ -1,9 +1,7 @@
 import React, { Component } from "react";
 import axios from 'axios'
 
-import 'primereact/resources/primereact.min.css';
-import 'primeicons/primeicons.css';
-import 'primeflex/primeflex.css';
+
 import Table from "./Table";
 import BoardHeader from "./ BoardHeader";
 import 'roboto-fontface/css/roboto/roboto-fontface.css'
@@ -76,10 +74,10 @@ class Board extends Component {
     render() {
 
         return (
-            <div className="Board">
+            <div className="board">
                 <BoardHeader time={this.state.time} date={this.state.date} name={this.props.name}></BoardHeader>
                 {/* Max height */}
-                <div className=" flex items-center justify-center flex-wrap" >
+                <div className="tables" >
                     {
                         this.state.rosters.length > 0 && this.state.rosters.map((roster) => {
                             if (roster.roster.length > 0)
@@ -87,7 +85,6 @@ class Board extends Component {
                             return null
                         })
                     }
-
                 </div>
             </div >
         )

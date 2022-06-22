@@ -7,9 +7,6 @@ import { Messages } from 'primereact/messages';
 import axios from "axios";
 import { UserContext } from "../../context/UserContext";
 
-import 'primereact/resources/primereact.min.css';
-import 'primeicons/primeicons.css';
-import 'primeflex/primeflex.css';
 import PreviewAddTabs from "./PreviewAddTabs";
 import { useNavigate } from "react-router-dom";
 
@@ -56,17 +53,18 @@ export default function CreateRoster() {
 
     const [rostersList, setRostersList] = useState([])
     return (
-        <div className="flex align-items-center justify-content-center ">
+        <div className="flex align-items-center justify-content-center w-full">
             {rostersList.length === 0 ? (
                 <div>
-                    <div className="text-center text-3xl my-5 ">Upload Excel Roster</div>
+                    <div className="text-center text-3xl my-5">Upload Excel Roster</div>
                     <FileUpload name="Upload Excel" accept=".xls, .xlsx, .csv" url={process.env.REACT_APP_API_URL + "/api/edboard/roster/convert"}
                         emptyTemplate={<p className="m-0">Drag and drop files to here to upload.</p>}
-                        multiple onUpload={handleUpload} onError={handleError} />
+                        multiple onUpload={handleUpload} onError={handleError}
+                    />
                     <Messages className="w-full mb-3" ref={message}></Messages>
                 </div>
             ) : (
-                <div className="w-8">
+                <div>
                     <PreviewAddTabs rostersList={rostersList} setRostersList={setRostersList} />
                     <Messages className="w-full mb-3" ref={message}></Messages>
                     <Button label="Submit" icon="pi pi-save" className="w-3" onClick={handleSubmit} />

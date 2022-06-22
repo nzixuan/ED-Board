@@ -53,7 +53,7 @@ function ConfigView() {
 
     return (
         <div className="flex align-items-center justify-content-center ">
-            <div className="surface-card p-4 shadow-2 border-round w-full lg:w-5 my-6">
+            <div className="surface-card p-4 shadow-2 border-round w-full lg:w-7 my-6">
                 <div className="mb-5">
                     Board Assignments
                 </div>

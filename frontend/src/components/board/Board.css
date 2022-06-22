@@ -2,8 +2,13 @@
     font-family: Roboto;
 }
 
-div .Board {
+div .board {
     background-color: white;
     min-height: 100vh;
     height: max-content;
+}
+
+.tables {
+    display: flex;
+    flex-wrap: wrap;
 }
