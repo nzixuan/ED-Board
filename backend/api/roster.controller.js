@@ -28,9 +28,6 @@ class RosterController {
                 for (let j = 0; j < workbook.SheetNames.length; j++) {
                     const name = workbook.SheetNames[j]
                     roster = convert_to_json(workbook.Sheets[name], date)
-
-                    console.log(roster)
-
                     const validationError = addRosterListValidation({ username: "admin", ...roster }).error
                     if (validationError)
                         return res.status(400).json({ message: validationError.details[0].message, rosters: [] })
@@ -73,9 +70,12 @@ class RosterController {
 
         for (let i = 0; i < result.rosters.length; i++) {
             const roster = result.rosters[i]
-
             const assignmentSet = new Set(assignments[roster.staffType])
-            roster.roster = roster.roster.filter((staff) => { return assignmentSet.has(staff.assignment.trim()) })
+            roster.roster = roster.roster.filter((staff) => {
+                const obj = JSON.parse(JSON.stringify(staff))
+                const count = Object.values(obj).length
+                return (assignmentSet.has(staff.assignment.trim()) && count > 1)
+            })
         }
 
 
@@ -84,6 +84,23 @@ class RosterController {
             dateString: weekday[date.getDay()] + ", " + date.toLocaleDateString('en-GB')
         })
     }
+
+
+    static async viewLaterRoster(req, res, next) {
+
+        const validationError = rosterQueryValidation(req.query).error
+        if (validationError)
+            return res.status(400).json({ message: validationError.details[0].message })
+
+        let date = new Date()
+        if (req.query.date)
+            date = new Date(req.query.date)
+
+        let result = await RostersList.find({ date: { $gte: date } })
+        return res.json(result)
+
+    }
+
 
     static async massCreateRoster(req, res, next) {
         const validationError = massCreateValidation(req.body).error

@@ -19,7 +19,6 @@ function ConfigView() {
 
     useEffect(() => {
         axios.get(process.env.REACT_APP_API_URL + '/api/edboard/config').then((res) => {
-            console.log(res.data)
             setConfig({ boards: JSON.stringify(res.data.boards, undefined, 4), boardNames: JSON.stringify(res.data.boardNames, undefined, 4) })
 
         }).catch((err) => {

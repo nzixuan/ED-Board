@@ -18,6 +18,7 @@ class ConfigController {
 
         if (!config)
             return []
+
         return config.boards[board]
     }
 
@@ -26,7 +27,32 @@ class ConfigController {
 
         if (!config)
             return res.json({})
-        return res.json(config)
+        return res.json({})
+    }
+
+    static async getAllAssignments(req, res, next) {
+        const config = await Config.findOne().exec()
+        if (!config)
+            return res.json({})
+        let values = Object.values(config.boards)
+        values = values.reduce(function (acc, x) {
+            for (var key in x) {
+                if (acc[key] == null) {
+                    acc[key] = x[key];
+                } else {
+                    acc[key] = acc[key].concat(x[key])
+                }
+            }
+            return acc;
+        }, {});
+
+        for (var key in values) {
+            values[key] = values[key].filter((item, index) => {
+                return (values[key].indexOf(item) == index)
+            })
+        }
+
+        return res.json(values)
     }
 
     static async setConfig(req, res, next) {

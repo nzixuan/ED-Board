@@ -8,6 +8,7 @@ const configSchema = mongoose.Schema({
     boardNames: {
         type: Object,
     }
+
 })
 
 const Config = mongoose.model("config", configSchema)

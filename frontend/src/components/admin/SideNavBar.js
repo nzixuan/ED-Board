@@ -9,7 +9,7 @@ import "./SideNavBar.css"
 
 
 function SideNavBar() {
-    const items = [{ label: "Create Roster", pathname: "/admin", icon: "pi pi-book" },
+    const items = [{ label: "Edit Roster", pathname: "/admin", icon: "pi pi-book" },
     { label: "Audit Log", pathname: "/admin/audit", icon: "pi pi-clock" },
     { label: "Board Config", pathname: "/admin/config", icon: "pi pi-cog" }]
 
@@ -34,7 +34,7 @@ function SideNavBar() {
             <Divider className="divider" />
             {items.map((item) => <MenuButton className={location.pathname === item.pathname ?
                 "navigation-button navigation-current" : "navigation-button navigation-away"}
-                label={item.label} icon={item.icon} onClick={() => navigate(item.pathname)} />)}
+                label={item.label} icon={item.icon} onClick={() => navigate(item.pathname)} key={item.label} />)}
             <Divider className="divider" />
             <MenuButton className="navigation-button navigation-away" label="Sign Out" icon="pi pi-user-minus" onClick={signOut}></MenuButton>
         </div >

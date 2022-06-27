@@ -23,10 +23,13 @@ router.route("/roster/massCreate").post(RosterCtrl.massCreateRoster)
 router.route("/roster/create").post(RosterCtrl.createRoster)
 router.route("/roster/delete").post(RosterCtrl.deleteRoster)
 router.route("/roster/types").get(RosterCtrl.getTypes)
+router.route("/roster/later").get(RosterCtrl.viewLaterRoster)
+
 // router.route("/roster/search").get(RosterCtrl.searchName)
 
 router.route("/config").post(ConfigCtrl.setConfig)
 router.route("/config").get(ConfigCtrl.getConfig)
+router.route("/config/allAssignments").get(ConfigCtrl.getAllAssignments)
 
 router.route("/config/boards").get(ConfigCtrl.getBoards)
 

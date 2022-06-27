@@ -4,14 +4,10 @@
 
 .page {
     display: flex;
-    height: 100vh;
-    width: 100vw;
-
 }
 
 .dashboard {
     flex-grow: 1;
     width: 100%;
     padding-left: var(--barWidth);
-
 }

@@ -107,7 +107,7 @@ const massCreateValidation = (data => {
 const configSchema = Joi.object({
     username: Joi.string().required(),
     boards: Joi.object().required(),
-    boardNames: Joi.object().required()
+    boardNames: Joi.object().required(),
 })
 
 const configValidation = (data => {

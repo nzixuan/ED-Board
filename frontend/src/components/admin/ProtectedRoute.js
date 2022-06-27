@@ -33,7 +33,8 @@ function ProtectedRoute({ children }) {
         <div className="page">
             <SideNavBar></SideNavBar>
             <div className="dashboard" >
-                <Outlet /></div></div>
+                <Outlet /></div>
+        </div>
     ) : <Navigate to="/login" />;
 }
 
