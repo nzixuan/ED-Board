@@ -5,7 +5,8 @@ import { Button } from 'primereact/button';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { UserContext } from "../../context/UserContext";
-import { Dialog } from 'primereact/dialog';
+import { ConfirmPopup } from 'primereact/confirmpopup'; // To use <ConfirmPopup> tag
+import { confirmPopup } from 'primereact/confirmpopup'; // To use confirmPopup method
 
 import axios from "axios";
 import "./RosterView.css"
@@ -140,9 +141,17 @@ export default function RosterView(props) {
                                     return (
                                         <TabPanel header={roster.staffType.toUpperCase()} key={rosterindex}>
                                             <Button label="Add Assignment" className="m-4" ></Button>
-                                            <Button label="Delete Roster" className="m-4" onClick={() => {
-                                                deleteRoster(rosters.date)
-                                            }} ></Button>
+                                            <Button label="Delete Roster" className="m-4 delete-button" onClick={
+                                                (event) => {
+                                                    confirmPopup({
+                                                        target: event.currentTarget,
+                                                        message: 'Are you sure you want to proceed? \n This action will delete all rosters for the date.',
+                                                        icon: 'pi pi-exclamation-triangle',
+                                                        accept: () => deleteRoster(rosters.date),
+
+                                                    });
+                                                }} ></Button>
+                                            <ConfirmPopup />
                                             < DataTable className="h-full" value={roster.roster} responsiveLayout="scroll"
                                                 showGridlines stripedRows size="medium" onRowReorder={onRowReorder}>
                                                 <Column rowReorder style={{ width: '3em' }} />

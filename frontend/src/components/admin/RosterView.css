@@ -36,3 +36,8 @@
     background-color: var(--primary-300) !important;
     border-color: var(--primary-300) !important;
 }
+
+.delete-button {
+    background-color: rgba(255, 0, 0, 0.778) !important;
+    border-color: rgba(255, 0, 0, 0.778) !important;
+}
