@@ -7,12 +7,12 @@ import axios from "axios";
 import './AuditTrailView.css'
 
 function dateTemplate(rowData) {
-    return new Date(rowData.createdAt).toLocaleString()
+    return new Date(rowData.createdAt).toLocaleString('en-GB')
 }
 
 function documentTemplate(rowData) {
     if (rowData.documentId)
-        return new Date(rowData.documentId.date).toLocaleDateString()
+        return new Date(rowData.documentId.date).toLocaleDateString('en-GB')
     return ""
 }
 
