@@ -8,12 +8,8 @@ import axios from "axios";
 import { UserContext } from "../../context/UserContext";
 
 import PreviewAddTabs from "./PreviewAddTabs";
-import { useNavigate } from "react-router-dom";
 
-
-export default function CreateRoster() {
-
-    const navigate = useNavigate();
+export default function CreateRoster(props) {
 
     const [user,] = useContext(UserContext)
 
@@ -41,9 +37,7 @@ export default function CreateRoster() {
     async function handleSubmit() {
         try {
             await axios.post(process.env.REACT_APP_API_URL + '/api/edboard/roster/massCreate', { username: user.username, rosters: rostersList })
-            navigate("/admin")
-
-            setRostersList([])
+            props.setDisplayDialog(false)
 
         } catch (err) {
             console.log(err)

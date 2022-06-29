@@ -28,7 +28,6 @@ function App() {
             <Route exact path="/login" element={<SignIn />} />
             <Route path="/admin" element={<ProtectedRoute />}>
               <Route path="" element={<RosterView />} />
-              <Route path="create" element={<CreateRoster />} />
               <Route path="audit" element={<AuditTrailView />} />
               <Route path="config" element={<ConfigView />} />
               <Route path="*" element={<PageNotFound />} />

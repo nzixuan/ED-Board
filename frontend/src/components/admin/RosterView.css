@@ -37,7 +37,45 @@
     border-color: var(--primary-300) !important;
 }
 
+.assignment-column {
+    width: 10rem;
+}
+
+.data-column {
+    width: 11rem;
+
+}
+
+.new-tab {
+    width: 6rem;
+}
+
+.date-label {
+    width: 14rem;
+    font-size: 1.2rem;
+    margin-left: 1rem;
+    margin-right: 1rem;
+}
+
+.date-tabs {
+    display: flex;
+    /* align-items: center; */
+    justify-content: center;
+}
+
 .delete-button {
-    background-color: rgba(255, 0, 0, 0.778) !important;
-    border-color: rgba(255, 0, 0, 0.778) !important;
+    background-color: white !important;
+    border-color: white !important;
+    color: var(--surface-500) !important;
+    width: 1.5rem !important;
+    height: 1rem !important;
+    border-radius: 100% !important;
+    margin: 0.5rem !important;
+    transition-property: background-color, border-colour, color;
+    transition-duration: 150ms;
+}
+
+.delete-button:hover {
+    background-color: var(--surface-400) !important;
+    border-color: var(--surface-400) !important;
 }

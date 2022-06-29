@@ -14,7 +14,7 @@ class RosterController {
     static async ExceltoJson(req, res, next) {
         const form = new formidable.IncomingForm({ multiples: true });
         let rosters = []
-        form.parse(req, (err, fields, files) => {
+        form.parse(req, async (err, fields, files) => {
 
             const entries = files["Upload Excel"].length ? files["Upload Excel"] : [files["Upload Excel"]]
             // Loop through all workbooks
@@ -27,7 +27,15 @@ class RosterController {
                 //Loop through all sheets
                 for (let j = 0; j < workbook.SheetNames.length; j++) {
                     const name = workbook.SheetNames[j]
-                    roster = convert_to_json(workbook.Sheets[name], date)
+
+                    try {
+                        roster = await convert_to_json(workbook.Sheets[name])
+
+                    } catch (e) {
+                        console.log(e)
+                        return res.status(400).json({ message: "Error converting excel", rosters: [] })
+
+                    }
                     const validationError = addRosterListValidation({ username: "admin", ...roster }).error
                     if (validationError)
                         return res.status(400).json({ message: validationError.details[0].message, rosters: [] })

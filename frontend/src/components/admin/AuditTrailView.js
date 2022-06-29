@@ -19,7 +19,6 @@ function documentTemplate(rowData) {
 export default function AuditTrailView(props) {
 
     const [audits, setAudits] = useState([]);
-    const [loading, setLoading] = useState(false);
     const [totalRecords, setTotalRecords] = useState(0);
 
 
@@ -35,17 +34,14 @@ export default function AuditTrailView(props) {
     }
 
     const loadLazyData = () => {
-        setLoading(true);
         axios.get(process.env.REACT_APP_API_URL + '/api/edboard/audit', { params: { auditPerPage: lazyParams.rows, page: lazyParams.page } }).then((res) => {
             console.log(res.data)
             setTotalRecords(res.data.total_result);
             setAudits(res.data.audits)
-            setLoading(false);
 
         }).catch((err) => {
             setAudits([])
             setTotalRecords(0);
-            setLoading(false);
         })
     }
 

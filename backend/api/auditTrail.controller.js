@@ -29,9 +29,7 @@ class AuditTrailController {
         }
 
         try {
-            // audits = await auditTrail.find(filters).sort('-createdAt').populate('documentId', "date").limit(auditPerPage).skip(0)
             audits = await auditTrail.find(filters).sort('-createdAt').populate('documentId', "date").limit(auditPerPage).skip(auditPerPage * page)
-            console.log(audits)
             totalNum = await auditTrail.countDocuments(filters)
         } catch (e) {
             console.error('Unable to issue command', e.message)
