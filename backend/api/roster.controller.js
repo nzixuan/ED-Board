@@ -6,7 +6,7 @@ const formidable = require('formidable');
 const XLSX = require("xlsx");
 const { convert_to_json, createNewRoster, findTypes, editRoster, appendRoster } = require("./roster.handlers.js");
 const { createTrail } = require("./auditTrail.controller")
-const ConfigCtrl = require("./config.controller.js");
+const { ConfigController } = require("./config.controller.js");
 const { ConnectionStates } = require("mongoose");
 
 class RosterController {
@@ -62,11 +62,12 @@ class RosterController {
         if (req.query.date)
             date = new Date(req.query.date)
 
-        let result = await RostersList.findOne({ date: date })
+        const day = new Date(date.toDateString())
+        let result = await RostersList.findOne({ date: day })
         if (!req.query.board)
             return res.json(result.rosters)
 
-        const assignments = await ConfigCtrl.getBoardAssignments(req.query.board)
+        const assignments = await ConfigController.getBoardAssignments(req.query.board)
         if (!assignments)
             return res.status(400).json({ message: "Config not found" })
 
@@ -103,7 +104,8 @@ class RosterController {
         let date = new Date()
         if (req.query.date)
             date = new Date(req.query.date)
-
+        else
+            date.setDate(date.getDate() - 1)
         let result = await RostersList.find({ date: { $gte: date } })
         return res.json(result)
 
@@ -111,6 +113,7 @@ class RosterController {
 
 
     static async massCreateRoster(req, res, next) {
+
         const validationError = massCreateValidation(req.body).error
         if (validationError)
             return res.status(400).json({ message: validationError.details[0].message })

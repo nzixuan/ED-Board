@@ -5,8 +5,10 @@
     background-color: #FFFFFF !important;
 }
 
-.card {
-    margin: 0.5rem;
+.table-card {
+    margin: 0.5rem !important;
+    width: 50vw !important;
+
 }
 
 .p-datatable-table {

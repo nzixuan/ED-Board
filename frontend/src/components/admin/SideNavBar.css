@@ -15,6 +15,7 @@
     border-style: solid;
     border-color: var(--surface-300);
     border-width: 1px;
+    background-color: white;
 }
 
 .topbar {

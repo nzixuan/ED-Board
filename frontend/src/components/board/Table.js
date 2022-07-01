@@ -16,7 +16,7 @@ export default function Table(props) {
 
 
     return (
-        <div className="card" >
+        <div className="table-card" >
             {
                 props.roster &&
                 < DataTable className="table" value={props.roster["roster"]} header={(props.roster.staffType).toUpperCase()} responsiveLayout="scroll"

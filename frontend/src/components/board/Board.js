@@ -18,7 +18,7 @@ class Board extends Component {
     async loadData() {
         try {
             //TODO: Remove date
-            const data = await axios.get(process.env.REACT_APP_API_URL + '/api/edboard/roster/', { params: { date: "05/26/2022", board: this.props.name } })
+            const data = await axios.get(process.env.REACT_APP_API_URL + '/api/edboard/roster/', { params: { board: this.props.name } })
             let rosters = data.data.rosters
             rosters.sort((a, b) => {
                 if (a.staffType === "doctor") {

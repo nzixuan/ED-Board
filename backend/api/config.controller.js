@@ -75,6 +75,7 @@ async function getAssignments() {
         values[key] = values[key].filter((item, index) => {
             return (values[key].indexOf(item) == index)
         })
+        values[key].sort()
     }
 
     return values

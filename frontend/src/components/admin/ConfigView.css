@@ -1,0 +1,52 @@
+* {
+    --checkbox-width: 7rem;
+}
+
+.p-tabview-panels {
+    padding-left: 0% !important;
+    padding-right: 0% !important;
+}
+
+.top-labels {
+    display: flex;
+    align-items: center;
+    background-color: white;
+    z-index: 4;
+    box-shadow: 0px 5px 5px -5px rgba(0, 0, 0, 0.02), 0px 5px 7px -5px rgba(0, 0, 0, 0.05), 0px 6px 9px -6px rgba(0, 0, 0, 0.08);
+}
+
+.add-button {}
+
+.assignment-label {
+    width: 12rem;
+    font-size: medium;
+}
+
+.checkbox {
+    width: var(--checkbox-width);
+    align-self: center;
+
+}
+
+.board-label {
+    width: var(--checkbox-width);
+    text-overflow: ellipsis;
+    text-align: center;
+    font-size: medium;
+
+}
+
+.checkbox-container {
+    width: var(--checkbox-width);
+    display: flex;
+    justify-content: center;
+
+}
+
+.save-button {
+    position: fixed !important;
+    right: 2rem;
+    bottom: 2rem;
+    font-size: large !important;
+    width: 8rem;
+}

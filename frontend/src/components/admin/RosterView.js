@@ -1,5 +1,5 @@
 import React from "react";
-import { useState, useEffect, useContext } from 'react';
+import { useState, useEffect, useContext, useRef } from 'react';
 import { TabView, TabPanel } from 'primereact/tabview';
 import { Button } from 'primereact/button';
 import { DataTable } from 'primereact/datatable';
@@ -9,6 +9,9 @@ import { ConfirmPopup } from 'primereact/confirmpopup'; // To use <ConfirmPopup>
 import { confirmPopup } from 'primereact/confirmpopup'; // To use confirmPopup method
 import { InputText } from 'primereact/inputtext';
 import { Dialog } from 'primereact/dialog';
+import AssignmentDialog from "./AssignmentDialog";
+import { Toolbar } from 'primereact/toolbar';
+import { ToggleButton } from 'primereact/togglebutton';
 
 import axios from "axios";
 import "./RosterView.css"
@@ -40,18 +43,19 @@ const formatDate = (date) => {
 
 export default function RosterView(props) {
     const [user,] = useContext(UserContext)
-    const [displayDialog, setDisplayDialog] = useState(false);
+    const [displayAddRosterDialog, setDisplayAddRosterDialog] = useState(false);
+    const [displayAddAssignDialog, setDisplayAddAssignDialog] = useState(false);
+    const [reorder, setReorder] = useState(false);
 
     const [rostersList, setRostersList] = useState([]);
     const [activeIndex, setActiveIndex] = useState(0);
-
+    const prevLength = useRef(null);
 
     useEffect(() => {
         loadRostersList()
     }, []);
 
     useEffect(() => {
-        console.log(activeIndex)
         if (activeIndex >= rostersList.length && activeIndex > 0)
             setActiveIndex(rostersList.length - 1)
 
@@ -59,9 +63,9 @@ export default function RosterView(props) {
 
 
     useEffect(() => {
-        if (displayDialog === false)
+        if (displayAddRosterDialog === false)
             loadRostersList()
-    }, [displayDialog]);
+    }, [displayAddRosterDialog]);
 
     const deleteRoster = (date) => {
         axios.post(process.env.REACT_APP_API_URL + "/api/edboard/roster/delete", { username: user.username, date: date }).then((res) => {
@@ -71,9 +75,21 @@ export default function RosterView(props) {
 
     const loadRostersList = () => {
         axios.get(process.env.REACT_APP_API_URL + '/api/edboard/roster/later').then((res) => {
-            setRostersList(res.data)
-            setActiveIndex(activeIndex)
-            //TODO: if roster list = [] then make new tab 
+            if (res.data < 1) {
+                const today = new Date()
+                today.setHours(0, 0, 0, 0)
+                createNewRoster(today)
+
+            }
+            else {
+                setRostersList(res.data)
+                console.log(prevLength.current)
+                if (res.data.length > prevLength.current)
+                    setActiveIndex(res.data.length)
+                else
+                    setActiveIndex(activeIndex)
+                prevLength.current = res.data.length
+            }
         }).catch((err) => {
             //TODO: some error thingy
             setRostersList([])
@@ -102,42 +118,75 @@ export default function RosterView(props) {
         )
     };
 
+    const createNewRoster = (date) => {
+        axios.get(process.env.REACT_APP_API_URL + '/api/edboard/config/allAssignments').then((res) => {
+
+            const assignments = res.data
+            let assignmentSet = {};
+            for (const property in assignments) {
+                assignmentSet[property] = new Set(assignments[property])
+            }
+
+            let newRosters = {}
+            newRosters.username = user.username
+            if (date === undefined && rostersList.length > 0) {
+                const rosters = rostersList[rostersList.length - 1]
+                const newDate = new Date(rosters.date)
+                newDate.setDate(newDate.getDate() + 1)
+                newRosters.date = newDate
+                newRosters.rosters = rosters.rosters.map((roster) => {
+                    return {
+                        staffType: roster.staffType, roster: roster.roster.filter((staff) => {
+                            return assignmentSet[roster.staffType] && assignmentSet[roster.staffType].has(staff.assignment)
+                        }).map((staff) => {
+                            return { assignment: staff.assignment }
+                        })
+                    }
+                })
+
+                const newRostersType = new Set(newRosters.rosters.map((roster) => roster.staffType))
+                for (const property in assignments) {
+                    if (!newRostersType.has(property)) {
+                        newRosters.rosters.push({
+                            staffType: property, roster: assignments[property].map((assignment) => {
+                                return { assignment: assignment }
+                            })
+                        })
+                    }
+                }
+            } else {
+                if (!date) {
+                    var today = new Date()
+                    today.setHours(0, 0, 0, 0)
+                    newRosters.date = today
+                }
+                else
+                    newRosters.date = date
+                newRosters.rosters = []
+                for (const property in assignments) {
+                    newRosters.rosters.push({
+                        staffType: property, roster: assignments[property].map((assignment) => {
+                            return { assignment: assignment }
+                        })
+                    })
+                }
+
+            }
+
+            console.log(newRosters)
+            axios.post(process.env.REACT_APP_API_URL + '/api/edboard/roster/create', newRosters).then((res) => {
+                loadRostersList()
+            })
+        }).catch((err) => {
+            //Show err
+            console.log(err)
+        })
+    }
+
     const newRosterTabHeaderTemplate = (options) => {
         return (
             <div className="new-tab">
-                <Button label="" icon="pi pi-plus" className="add-button m-2" onClick={() => {
-                    axios.get(process.env.REACT_APP_API_URL + '/api/edboard/config/allAssignments').then((res) => {
-                        //Guarding
-                        if (rostersList === [])
-                            return
-                        let assignments = res.data
-                        for (const property in assignments) {
-                            assignments[property] = new Set(assignments[property])
-                        }
-                        const rosters = rostersList[rostersList.length - 1]
-                        let newRosters = {}
-                        console.log(rosters)
-                        newRosters.username = user.username
-                        const date = new Date(rosters.date)
-                        date.setDate(date.getDate() + 1)
-                        newRosters.date = date
-                        newRosters.rosters = rosters.rosters.map((roster) => {
-                            return {
-                                staffType: roster.staffType, roster: roster.roster.filter((staff) => {
-                                    return assignments[roster.staffType] && assignments[roster.staffType].has(staff.assignment)
-                                }).map((staff) => {
-                                    return { assignment: staff.assignment }
-                                })
-                            }
-                        })
-
-                        console.log(newRosters)
-                        axios.post(process.env.REACT_APP_API_URL + '/api/edboard/roster/create', newRosters).then((res) => loadRostersList())
-                    }).catch((err) => {
-                        //Show err
-                        console.log(err)
-                    })
-                }
+                <Button label="" icon="pi pi-plus" className="add-button m-2" onClick={() => createNewRoster()
                 }></Button>
             </div>
         )
@@ -161,6 +210,40 @@ export default function RosterView(props) {
         }
     }
 
+    const leftToolbarTemplate = () => {
+        return (
+            <React.Fragment>
+                <Button label="New Row" icon="pi pi-plus" className="p-button-success mr-2" />
+                {/* onClick={openNew}  */}
+
+                <ToggleButton checked={!reorder} onChange={(e) => setReorder(!e.value)} className=" mr-2"
+                    onLabel="Reorder Row " onIcon="pi pi-bars" offLabel="Reorder Done" offIcon="pi pi-bars" />
+
+                <Button label="Delete" icon="pi pi-trash" className="p-button-danger mr-2" />
+                {/* onClick={confirmDeleteSelected} disabled={!selectedProducts || !selectedProducts.length} */}
+
+            </React.Fragment>
+        )
+    }
+
+    const rightToolbarTemplate = () => {
+        return (
+            <React.Fragment>
+                <Button label="Export" icon="pi pi-upload" className="p-button-help" />
+                {/* onClick={exportCSV} */}
+            </React.Fragment>
+        )
+    }
+
+    const actionBodyTemplate = (rowData) => {
+        return (
+            <React.Fragment>
+                <Button icon="pi pi-trash" className="p-button-rounded p-button-warning" />
+                {/* onClick={() => confirmDeleteProduct(rowData)} */}
+            </React.Fragment>
+        );
+    }
+
     const textEditor = (field) => (options) => {
         const staff = options.rowData[field]
         return <InputText type="text" value={staff ? staffToString(staff) : ""} onChange={
@@ -174,6 +257,7 @@ export default function RosterView(props) {
             }
         } />;
     }
+
 
     const onCellEditComplete = (e) => {
         let { rowData, newValue, field } = e;
@@ -189,18 +273,35 @@ export default function RosterView(props) {
 
     }
 
+    const onRowReorder = (rostersIndex, rosterindex) => (e) => {
+        let newRostersList = rostersList.map((newRosters, newRostersIndex) => {
+            if (newRostersIndex !== rostersIndex)
+                return newRosters
+            return {
+                date: newRosters.date, rosters: newRosters.rosters.map((newRoster, newRosterIndex) => {
+                    if (newRosterIndex !== rosterindex)
+                        return newRoster
+                    return { staffType: newRoster.staffType, roster: e.value }
+                }
+                )
+            }
+        })
+
+        saveRosterList(newRostersList)
+        setRostersList(newRostersList);
+
+    }
+
     return (
-
-
         <div className="content" >
             <div className="heading-banner">
                 <h2 className="heading">
                     Edit Roster                </h2>
-                <Button label="Add Roster" className="m-4" onClick={() => setDisplayDialog(true)}></Button>
-                <Dialog visible={displayDialog} headerClassName="p-1" contentClassName="border-round-bottom" onHide={() => {
-                    setDisplayDialog(false)
+                <Button label="Add Roster" className="m-4" onClick={() => setDisplayAddRosterDialog(true)}></Button>
+                <Dialog visible={displayAddRosterDialog} headerClassName="p-1" contentClassName="border-round-bottom" onHide={() => {
+                    setDisplayAddRosterDialog(false)
                 }} showHeader maximizable blockScroll style={{ width: '95vw', height: '100vh' }} >
-                    <CreateRoster setDisplayDialog={setDisplayDialog}></CreateRoster>
+                    <CreateRoster setDisplayDialog={setDisplayAddRosterDialog}></CreateRoster>
                 </Dialog>
             </div>
             <div className="card">
@@ -212,31 +313,21 @@ export default function RosterView(props) {
 
                                 {rosters.rosters.length > 0 && rosters.rosters.map((roster, rosterindex) => {
 
-                                    const onRowReorder = (e) => {
-                                        let newRostersList = rostersList.map((newRosters, newRostersIndex) => {
-                                            if (newRostersIndex !== rostersIndex)
-                                                return newRosters
-                                            return {
-                                                date: newRosters.date, rosters: newRosters.rosters.map((newRoster, newRosterIndex) => {
-                                                    if (newRosterIndex !== rosterindex)
-                                                        return newRoster
-                                                    return { staffType: newRoster.staffType, roster: e.value }
-                                                }
-                                                )
-                                            }
-                                        })
-
-                                        saveRosterList(newRostersList)
-                                        setRostersList(newRostersList);
-
-                                    }
-
                                     return (
                                         <TabPanel header={roster.staffType.toUpperCase()} key={rosterindex}>
-                                            <Button label="Add Assignment" className="m-4" ></Button>
+                                            {/* <Button label="Add Assignment" className="m-4" onClick={() => setDisplayAddAssignDialog(true)}></Button>
+                                            <Dialog visible={displayAddAssignDialog} header="Assignment" headerClassName="p-4 pl-4 pt-3" contentClassName="border-round-bottom" onHide={() => {
+                                                setDisplayAddAssignDialog(false)
+                                            }} showHeader blockScroll style={{ width: '40vw', height: '80vh' }} >
+                                                <AssignmentDialog></AssignmentDialog>
+                                            </Dialog> */}
+                                            <Toolbar className="mb-4" left={leftToolbarTemplate} right={rightToolbarTemplate}></Toolbar>
+
                                             < DataTable className="h-full" value={roster.roster} responsiveLayout="scroll"
-                                                showGridlines stripedRows size="medium" onRowReorder={onRowReorder} editMode="cell">
-                                                <Column rowReorder style={{ width: '3em' }} />
+                                                showGridlines stripedRows size="medium" onRowReorder={onRowReorder(rostersIndex, rosterindex)} editMode="cell">
+                                                {reorder &&
+                                                    <Column rowReorder style={{ width: '3em' }} />}
+                                                <Column selectionMode="multiple" headerStyle={{ width: '3rem' }} exportable={false}></Column>
                                                 <Column className="assignment-column" field="assignment" header="Assignment" headerClassName="header"></Column>
                                                 <Column className="data-column" field="am" header="AM" body={nameTemplate("am")} headerClassName="header"
                                                     editor={(options) => textEditor("am")(options)} onCellEditComplete={onCellEditComplete}></Column>
@@ -252,6 +343,8 @@ export default function RosterView(props) {
                                                 }
                                                 <Column className="data-column" field="nd" header="ND" body={nameTemplate("nd")} headerClassName="header"
                                                     editor={(options) => textEditor("nd")(options)} onCellEditComplete={onCellEditComplete}></Column>
+                                                <Column body={actionBodyTemplate} exportable={false} style={{ width: '4rem' }}></Column>
+
                                             </DataTable>
                                         </TabPanel>
                                     )
@@ -268,6 +361,5 @@ export default function RosterView(props) {
                 </TabView>
             </div>
         </div >
-
     )
 }
