@@ -149,6 +149,10 @@ class RosterController {
         const validationError = addRosterListValidation(req.body).error
         if (validationError)
             return res.status(400).json({ message: validationError.details[0].message })
+        const takenDate = await RostersList.findOne({ date: req.body.date })
+        if (takenDate) {
+            return res.status(400).json({ message: "Date is already created" })
+        }
 
         try {
             await createNewRoster(req.body.username, req.body.date, req.body.rosters)

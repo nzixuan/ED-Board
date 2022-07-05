@@ -55,6 +55,8 @@ export default function SignIn() {
                     {/* </div> */}
 
                     <Button label="Sign In" icon="pi pi-user" className="w-full" onClick={handleSubmit} />
+                    <Button className="p-button p-button-help p-2 mt-4" label="Go to Boards" onClick={() => { navigate("/") }}></Button>
+
                 </div>
             </div>
         </div>

@@ -14,5 +14,6 @@ export default function LandingPage(props) {
                 props.boards.map((board) => { return <Button className="m-4 text-xl w-3 h-3rem" label={board} key={board} onClick={() => { navigate("/" + board) }}></Button> })
             }
         </div>
+        <Button className="p-button p-button-help" label="Go to Admin View" onClick={() => { navigate("/admin") }}></Button>
     </div>)
 }

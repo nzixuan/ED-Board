@@ -19,8 +19,19 @@
 /* Headings */
 .header {
     background-color: #eeeeee !important;
+    /* background-color: #f5f0eb !important; */
 
 }
+
+.p-datatable-header {
+    /* option1  */
+    background-color: #b84758 !important;
+    /* option2 */
+    /* background-color: #94795d !important; */
+    border-color: #F5F5F5 !important;
+    color: white !important;
+}
+
 
 /* Column Title */
 .p-column-title {
@@ -44,5 +55,24 @@
 /* Striped Label */
 .striped {
     background-color: #EEEEEE !important;
+
+    /* option 1 */
+    /* background-color: #fbe4e7 !important; */
+    /* background-color: #ffecef !important; */
+    background-color: #ffeff2 !important;
+
+    /* option 2 */
+    /* background-color: #f5f0eb !important; */
+
+
+}
+
+td,
+th,
+.p-datatable-header {
+    /* border-color: #d2d2d2 !important; */
+    /* border-color: #dedbd8 !important; */
+
+    border-color: #dbdbdb !important;
 
 }

@@ -31,6 +31,8 @@ function SideNavBar() {
             </div >
             {/* <Button disabled label="ED Roster System" icon="pi pi-bars" className=" navigation-button system"></Button> */}
             <Divider className="divider" />
+            <h4 className="m-2 mt-3">{"Hello, " + user.username}</h4>
+            <Divider className="divider" />
             {items.map((item) => <MenuButton className={location.pathname === item.pathname ?
                 "navigation-button navigation-current" : "navigation-button navigation-away"}
                 label={item.label} icon={item.icon} onClick={() => navigate(item.pathname)} key={item.label} />)}
