@@ -51,14 +51,16 @@ export default function RosterView(props) {
     const [row, setRow] = useState(null);
     const [reorder, setReorder] = useState(false);
     const [selectedRows, setSelectedRows] = useState(null);
-    const [deleteRowDialog, setDeleteRowDialog] = useState(false);
     const [deleteRowsDialog, setDeleteRowsDialog] = useState(false);
-    const [addRowDialog, setAddRowDialog] = useState(false);
     const [type, setType] = useState([]);
 
     const toast = useRef(null);
     const dt = useRef(null);
+    const deleteRow = useRef(null);
     const newRosters = useRef(null);
+    const newStaff = useRef(null);
+    const addRow = useRef(null);
+
 
     const [rostersList, setRostersList] = useState([]);
     const [activeIndex, setActiveIndex] = useState(0);
@@ -151,6 +153,7 @@ export default function RosterView(props) {
                 const rosters = rostersList[rostersList.length - 1]
                 const newDate = new Date(date)
                 newRosters.date = newDate
+
                 newRosters.rosters = rosters.rosters.map((roster) => {
                     return {
                         staffType: roster.staffType, roster: roster.roster.filter((staff) => {
@@ -159,7 +162,7 @@ export default function RosterView(props) {
                             return { assignment: staff.assignment }
                         })
                     }
-                })
+                }).filter((roster) => roster.roster.length > 0)
 
                 const newRostersType = new Set(newRosters.rosters.map((roster) => roster.staffType))
                 for (const property in assignments) {
@@ -171,6 +174,7 @@ export default function RosterView(props) {
                         })
                     }
                 }
+
             } else {
                 newRosters.date = new Date(date)
                 newRosters.rosters = []
@@ -181,8 +185,9 @@ export default function RosterView(props) {
                         })
                     })
                 }
-
             }
+            newRosters.rosters.sort((a, b) => { return a.staffType.localeCompare(b.staffType) })
+            console.log(newRosters.rosters)
 
             axios.post(process.env.REACT_APP_API_URL + '/api/edboard/roster/create', newRosters).then((res) => {
                 loadRostersList()
@@ -193,12 +198,46 @@ export default function RosterView(props) {
         })
     }
 
-    const newTypeTabHeaderTemplate = (options) => {
-        return (
+    const newTypeTabHeaderTemplate = (rostersIndex) => (options) => {
+        const [staffType, setStaffType] = useState("")
+        const rosterType = rostersList[rostersIndex].rosters.map((val) => val.staffType)
+        const types = Object.keys(type).filter((val) => !rosterType.includes(val)).map((val) => { return { label: val.toUpperCase(), value: val } })
+        return (types.length > 0 &&
             <div className="pr-2">
-                <Button label="" icon="pi pi-plus" className="add-button " ></Button>
-            </div>
+                <Button label="" icon="pi pi-plus" className="add-button " onClick={(e) => {
+                    newStaff.current.toggle(e)
 
+                }}></Button>
+
+                <OverlayPanel dismissable ref={newStaff} showCloseIcon >
+                    <div>
+                        <div className="field">
+                            <label htmlFor="staffType" className="block"> Staff Type</label>
+
+                            <Dropdown id="staffType" className="w-full" value={staffType} options={types}
+                                filter filterBy="label" onChange={(e) => setStaffType(e.target.value)}
+                                optionLabel="label" scrollHeight="300px" />
+                        </div>
+                        <div className="flex justify-content-end">
+                            <Button label="Cancel" icon="pi pi-times" className="p-button-text" onClick={() => newStaff.current.hide()} />
+                            <Button label="Confirm" icon="pi pi-check" className="p-button-text" onClick={() => {
+                                if (!staffType || staffType === "") {
+                                    toast.current.show({ severity: 'error', summary: 'Error', detail: 'Assignment cannot be empty', life: 3000 });
+                                    return
+                                }
+
+
+                                let newRostersList = rostersList;
+                                newRostersList[props.rostersIndex].rosters.push({ staffType: staffType, rosters: [] })
+                                saveRosterList(newRostersList)
+                                setStaffType("")
+                                newStaff.current.hide()
+                                toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Row Added', life: 3000 });
+                            }} />
+                        </div>
+                    </div>
+                </OverlayPanel>
+            </div>
         )
     };
 
@@ -257,7 +296,7 @@ export default function RosterView(props) {
     const leftToolbarTemplate = () => {
         return (
             <React.Fragment>
-                <Button label="New Row" icon="pi pi-plus" className="p-button-success mr-2" onClick={() => setAddRowDialog(true)} />
+                <Button label="New Row" icon="pi pi-plus" className="p-button-success mr-2" onClick={(e) => addRow.current.toggle(e)} />
 
                 <ToggleButton checked={!reorder} onChange={(e) => setReorder(!e.value)} className=" mr-2"
                     onLabel="Reorder Row " onIcon="pi pi-bars" offLabel="Reorder Done" offIcon="pi pi-bars" />
@@ -281,9 +320,9 @@ export default function RosterView(props) {
     const actionBodyTemplate = (rowData) => {
         return (
             <React.Fragment>
-                <Button icon="pi pi-trash" className="p-button-rounded p-button-warning" onClick={() => {
+                <Button icon="pi pi-trash" className="p-button-rounded p-button-warning" onClick={(e) => {
                     setRow(rowData)
-                    setDeleteRowDialog(true)
+                    deleteRow.current.toggle(e)
                 }} />
 
             </React.Fragment>
@@ -342,23 +381,6 @@ export default function RosterView(props) {
 
     }
 
-    const deleteRowDialogFooter = (rostersIndex, rosterindex) => (
-        <React.Fragment>
-            <Button label="No" icon="pi pi-times" className="p-button-text" onClick={() => setDeleteRowDialog(false)} />
-            <Button label="Yes" icon="pi pi-check" className="p-button-text" onClick={() => {
-                let newRostersList = rostersList;
-                let roster = newRostersList[rostersIndex].rosters[rosterindex].roster
-                roster = roster.filter((val) => { return val !== row })
-                newRostersList[rostersIndex].rosters[rosterindex].roster = roster
-                saveRosterList(newRostersList)
-
-                setDeleteRowDialog(false);
-                setRow(null);
-                toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Product Deleted', life: 3000 });
-            }} />
-        </React.Fragment>
-    );
-
     const deleteRowsDialogFooter = (rostersIndex, rosterindex) => {
         return (
             <React.Fragment>
@@ -385,26 +407,23 @@ export default function RosterView(props) {
         return (<div>
             <div className="field">
                 <label htmlFor="assignment" className="block"> Assignment</label>
-
-                <Dropdown id="assignment" className="w-8" editable value={addRowState.assignment} options={options}
+                <Dropdown id="assignment" className="w-full" editable value={addRowState.assignment} options={options}
                     filter showClear filterBy="label" onChange={(e) => setAddRowState({ ...addRowState, assignment: e.target.value })}
                     optionLabel="label" scrollHeight="300px" />
-                {/* <InputText id="assignment" value={addRowState.assignment} onChange={(e) => setAddRowState({ ...addRowState, assignment: e.target.value })} /> */}
             </div>
             <div className="flex justify-content-end">
-                <Button label="Cancel" icon="pi pi-times" className="p-button-text" onClick={() => setAddRowDialog(false)} />
                 <Button label="Confirm" icon="pi pi-check" className="p-button-text" onClick={() => {
-                    if (!addRowState || addRowState.assignment === "") {
+                    if (!addRowState || !addRowState.assignment || addRowState.assignment.trim() === "") {
                         toast.current.show({ severity: 'error', summary: 'Error', detail: 'Assignment cannot be empty', life: 3000 });
                         return
                     }
 
 
                     let newRostersList = rostersList;
-                    newRostersList[props.rostersIndex].rosters[props.rosterindex].roster.push({ assignment: addRowState.assignment })
+                    newRostersList[props.rostersIndex].rosters[props.rosterindex].roster.push({ assignment: addRowState.assignment.trim() })
                     saveRosterList(newRostersList)
 
-                    setAddRowDialog(false);
+                    addRow.current.hide()
                     setAddRowState({ assignment: "" });
                     toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Row Added', life: 3000 });
                 }} />
@@ -435,12 +454,6 @@ export default function RosterView(props) {
 
                                     return (
                                         <TabPanel header={roster.staffType.toUpperCase()} key={rosterindex}>
-                                            {/* <Button label="Add Assignment" className="m-4" onClick={() => setDisplayAddAssignDialog(true)}></Button>
-                                            <Dialog visible={displayAddAssignDialog} header="Assignment" headerClassName="p-4 pl-4 pt-3" contentClassName="border-round-bottom" onHide={() => {
-                                                setDisplayAddAssignDialog(false)
-                                            }} showHeader blockScroll style={{ width: '40vw', height: '80vh' }} >
-                                                <AssignmentDialog></AssignmentDialog>
-                                            </Dialog> */}
                                             <Toolbar className="mb-4" left={leftToolbarTemplate} right={rightToolbarTemplate}></Toolbar>
 
                                             < DataTable className="h-full" ref={dt} value={roster.roster} responsiveLayout="scroll"
@@ -470,12 +483,25 @@ export default function RosterView(props) {
 
                                             </DataTable>
 
-                                            <Dialog visible={deleteRowDialog} blockScroll style={{ width: '450px' }} header="Confirm" modal footer={deleteRowDialogFooter(rostersIndex, rosterindex)} onHide={() => setDeleteRowDialog(false)}>
+                                            <OverlayPanel dismissable ref={deleteRow} showCloseIcon >
                                                 <div className="confirmation-content">
                                                     <i className="pi pi-exclamation-triangle mr-3" style={{ fontSize: '2rem' }} />
                                                     {row && <span>Are you sure you want to delete this row?</span>}
+                                                    <div className="flex justify-content-end pt-2">
+                                                        <Button label="No" icon="pi pi-times" className="p-button-text" onClick={() => deleteRow.current.hide()} />
+                                                        <Button label="Yes" icon="pi pi-check" className="p-button-text" onClick={() => {
+                                                            let newRostersList = rostersList;
+                                                            let roster = newRostersList[rostersIndex].rosters[rosterindex].roster
+                                                            roster = roster.filter((val) => { return val !== row })
+                                                            newRostersList[rostersIndex].rosters[rosterindex].roster = roster
+                                                            saveRosterList(newRostersList)
+                                                            deleteRow.current.hide()
+                                                            setRow(null);
+                                                            toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Product Deleted', life: 3000 });
+                                                        }} />
+                                                    </div>
                                                 </div>
-                                            </Dialog>
+                                            </OverlayPanel>
 
                                             <Dialog visible={deleteRowsDialog} blockScroll style={{ width: '450px' }} header="Confirm" modal footer={deleteRowsDialogFooter(rostersIndex, rosterindex)} onHide={() => setDeleteRowsDialog(false)}>
                                                 <div className="confirmation-content">
@@ -483,16 +509,16 @@ export default function RosterView(props) {
                                                     {selectedRows && <span>Are you sure you want to delete the selected rows?</span>}
                                                 </div>
                                             </Dialog>
-
-                                            <Dialog visible={addRowDialog} blockScroll style={{ width: '450px' }} header="New Row" contentClassName="border-round-bottom" onHide={() => setAddRowDialog(false)}>
+                                            <OverlayPanel dismissable ref={addRow} showCloseIcon >
                                                 <AddRowDialogBody rostersIndex={rostersIndex} rosterindex={rosterindex}></AddRowDialogBody>
-                                            </Dialog>
+                                            </OverlayPanel>
+
                                         </TabPanel>
 
                                     )
                                 })
                                 }
-                                <TabPanel headerTemplate={newTypeTabHeaderTemplate} headerClassName="flex align-items-center"></TabPanel>
+                                <TabPanel headerTemplate={newTypeTabHeaderTemplate(rostersIndex)} headerClassName="flex align-items-center"></TabPanel>
 
                             </TabView>
 

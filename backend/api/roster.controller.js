@@ -146,6 +146,7 @@ class RosterController {
     }
 
     static async createRoster(req, res, next) {
+
         const validationError = addRosterListValidation(req.body).error
         if (validationError)
             return res.status(400).json({ message: validationError.details[0].message })
@@ -161,6 +162,7 @@ class RosterController {
         catch (err) {
             return res.status(500).json({ message: err.message })
         }
+
 
         return res.json({ message: "Roster Created" })
 
