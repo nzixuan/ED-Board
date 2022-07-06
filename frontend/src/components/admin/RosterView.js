@@ -9,11 +9,13 @@ import { ConfirmPopup } from 'primereact/confirmpopup'; // To use <ConfirmPopup>
 import { confirmPopup } from 'primereact/confirmpopup'; // To use confirmPopup method
 import { InputText } from 'primereact/inputtext';
 import { Dialog } from 'primereact/dialog';
-import AssignmentDialog from "./AssignmentDialog";
 import { Toolbar } from 'primereact/toolbar';
 import { ToggleButton } from 'primereact/togglebutton';
 import { Toast } from 'primereact/toast';
 import { Dropdown } from 'primereact/dropdown';
+import { OverlayPanel } from 'primereact/overlaypanel';
+import { Calendar } from 'primereact/calendar';
+
 
 import axios from "axios";
 import "./RosterView.css"
@@ -55,6 +57,8 @@ export default function RosterView(props) {
     const [type, setType] = useState([]);
 
     const toast = useRef(null);
+    const dt = useRef(null);
+    const newRosters = useRef(null);
 
     const [rostersList, setRostersList] = useState([]);
     const [activeIndex, setActiveIndex] = useState(0);
@@ -130,19 +134,22 @@ export default function RosterView(props) {
 
     const createNewRoster = (date) => {
         axios.get(process.env.REACT_APP_API_URL + '/api/edboard/config/allAssignments').then((res) => {
-
             const assignments = res.data
             let assignmentSet = {};
             for (const property in assignments) {
                 assignmentSet[property] = new Set(assignments[property])
             }
-
             let newRosters = {}
             newRosters.username = user.username
-            if (date === undefined && rostersList.length > 0) {
+
+            if (date === undefined) {
+                var today = new Date()
+                today.setHours(0, 0, 0, 0)
+                newRosters.date = today
+            }
+            if (rostersList.length > 0) {
                 const rosters = rostersList[rostersList.length - 1]
-                const newDate = new Date(rosters.date)
-                newDate.setDate(newDate.getDate() + 1)
+                const newDate = new Date(date)
                 newRosters.date = newDate
                 newRosters.rosters = rosters.rosters.map((roster) => {
                     return {
@@ -165,13 +172,7 @@ export default function RosterView(props) {
                     }
                 }
             } else {
-                if (!date) {
-                    var today = new Date()
-                    today.setHours(0, 0, 0, 0)
-                    newRosters.date = today
-                }
-                else
-                    newRosters.date = date
+                newRosters.date = new Date(date)
                 newRosters.rosters = []
                 for (const property in assignments) {
                     newRosters.rosters.push({
@@ -202,25 +203,50 @@ export default function RosterView(props) {
     };
 
     const newRosterTabHeaderTemplate = (options) => {
+        const [date, setDate] = useState([]);
+        const dateList = rostersList.map((list) => new Date(list.date))
         return (
             <div className="new-tab">
-                <Button label="" icon="pi pi-plus" className="add-button m-2" onClick={() => createNewRoster()
+                <Button label="" icon="pi pi-plus" className="add-button m-2" onClick={(e) => newRosters.current.toggle(e)
                 }></Button>
+                <OverlayPanel dismissable ref={newRosters} showCloseIcon >
+                    <div className="flex flex-column">
+                        <Calendar disabledDates={dateList} minDate={new Date()} inline selectionMode="range" dateFormat="dd/mm/yy" value={date} onChange={(e) => setDate(e.value)}>
+                        </Calendar>
+                        <Button label="Confirm" onClick={() => {
+                            if (date.length === 2 && date[1] === null) {
+                                createNewRoster(date[0])
+                            } else if (date.length === 2) {
+                                let tempdate = date[0]
+                                while (tempdate <= date[1]) {
+                                    createNewRoster(new Date(tempdate))
+                                    tempdate.setDate(tempdate.getDate() + 1)
+                                }
+
+                            }
+                            setDate([])
+                            newRosters.current.hide();
+                        }}></Button>
+                    </div>
+                </OverlayPanel>
+
             </div>
         )
     }
 
     const dateHeaderTemplate = (date) => {
+        const id = date + Math.random().toString()
         return (options) => {
-            return (<div onClick={options.onClick} className="date-tabs">
+            return (<div id={id} onClick={options.onClick} className="date-tabs">
                 <h4 className="date-label">{formatDate(date)}</h4>
                 <Button icon="pi pi-times" className="delete-button" onClick={
                     (event) => {
                         confirmPopup({
-                            target: event.currentTarget,
+                            target: document.getElementById(id),
                             message: 'Are you sure you want to proceed? \n This action will delete all rosters for the date.',
                             icon: 'pi pi-exclamation-triangle',
                             accept: () => deleteRoster(date),
+                            style: { width: '20rem' }
 
                         });
                     }} ></Button>
@@ -246,8 +272,8 @@ export default function RosterView(props) {
     const rightToolbarTemplate = () => {
         return (
             <React.Fragment>
-                <Button label="Export" icon="pi pi-upload" className="p-button-help" />
-                {/* onClick={exportCSV} */}
+                {/* <Button label="Export" icon="pi pi-upload" className="p-button-help" onClick={() => dt.current.exportCSV()} /> */}
+
             </React.Fragment>
         )
     }
@@ -338,7 +364,6 @@ export default function RosterView(props) {
             <React.Fragment>
                 <Button label="No" icon="pi pi-times" className="p-button-text" onClick={() => setDeleteRowsDialog(false)} />
                 <Button label="Yes" icon="pi pi-check" className="p-button-text" onClick={() => {
-
                     let newRostersList = rostersList;
                     let roster = newRostersList[rostersIndex].rosters[rosterindex].roster
                     roster = roster.filter((val) => { return !selectedRows.includes(val) })
@@ -357,7 +382,6 @@ export default function RosterView(props) {
         const [addRowState, setAddRowState] = useState({ assignment: "" });
         const staffType = rostersList[props.rostersIndex].rosters[props.rosterindex].staffType;
         const options = type[staffType].map((val) => { return { label: val, value: val } })
-        console.log(type[staffType])
         return (<div>
             <div className="field">
                 <label htmlFor="assignment" className="block"> Assignment</label>
@@ -368,8 +392,8 @@ export default function RosterView(props) {
                 {/* <InputText id="assignment" value={addRowState.assignment} onChange={(e) => setAddRowState({ ...addRowState, assignment: e.target.value })} /> */}
             </div>
             <div className="flex justify-content-end">
-                <Button label="No" icon="pi pi-times" className="p-button-text" onClick={() => setAddRowDialog(false)} />
-                <Button label="Yes" icon="pi pi-check" className="p-button-text" onClick={() => {
+                <Button label="Cancel" icon="pi pi-times" className="p-button-text" onClick={() => setAddRowDialog(false)} />
+                <Button label="Confirm" icon="pi pi-check" className="p-button-text" onClick={() => {
                     if (!addRowState || addRowState.assignment === "") {
                         toast.current.show({ severity: 'error', summary: 'Error', detail: 'Assignment cannot be empty', life: 3000 });
                         return
@@ -419,7 +443,7 @@ export default function RosterView(props) {
                                             </Dialog> */}
                                             <Toolbar className="mb-4" left={leftToolbarTemplate} right={rightToolbarTemplate}></Toolbar>
 
-                                            < DataTable className="h-full" value={roster.roster} responsiveLayout="scroll"
+                                            < DataTable className="h-full" ref={dt} value={roster.roster} responsiveLayout="scroll"
                                                 showGridlines stripedRows size="medium" onRowReorder={onRowReorder(rostersIndex, rosterindex)}
                                                 selection={selectedRows} selectionMode="checkbox" onSelectionChange={(e) => {
                                                     setSelectedRows(e.value)

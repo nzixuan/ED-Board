@@ -106,7 +106,7 @@ class RosterController {
             date = new Date(req.query.date)
         else
             date.setDate(date.getDate() - 1)
-        let result = await RostersList.find({ date: { $gte: date } })
+        let result = await RostersList.find({ date: { $gte: date } }).sort({ date: 1 })
         return res.json(result)
 
     }
@@ -150,6 +150,7 @@ class RosterController {
         if (validationError)
             return res.status(400).json({ message: validationError.details[0].message })
         const takenDate = await RostersList.findOne({ date: req.body.date })
+
         if (takenDate) {
             return res.status(400).json({ message: "Date is already created" })
         }
