@@ -6,7 +6,7 @@ Joi.objectId = require('joi-objectid')(Joi)
 const registerSchema = Joi.object({
     username: Joi.string().min(4).max(30).alphanum().required(),
     password: Joi.string().required().min(4).max(30),
-    role: Joi.string().required().valid('admin', 'guest')
+    role: Joi.string().required().valid('admin', 'user')
 
 })
 

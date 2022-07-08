@@ -23,6 +23,8 @@ class UserController {
                     bcrypt.compare(userLoggingIn.password, dbUser.password)
                         .then(isCorrect => {
                             if (isCorrect) {
+                                if (!dbUser.approved)
+                                    return res.status(400).json({ message: "User has not been approved" })
                                 const payload = {
                                     id: dbUser._id,
                                     username: dbUser.username,
@@ -63,7 +65,8 @@ class UserController {
             const dbUser = new User({
                 username: user.username.toLowerCase(),
                 password: user.password,
-                role: user.role
+                role: user.role,
+                approved: false
             });
             dbUser.save()
             return res.json({ message: "User Registered" })

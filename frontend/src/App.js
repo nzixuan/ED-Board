@@ -12,6 +12,8 @@ import Board from "./components/board/Board"
 import axios from "axios";
 import AuditTrailView from "./components/admin/AuditTrailView";
 import RosterView from "./components/admin/RosterView";
+import ProtectedAdminRoute from "./components/admin/ProtectedAdminRoute";
+import AdminNotFound from "./components/admin/AdminNotFound";
 
 function App() {
   const [boards, setBoards] = useState([]);
@@ -28,9 +30,11 @@ function App() {
             <Route exact path="/login" element={<SignIn />} />
             <Route path="/admin" element={<ProtectedRoute />}>
               <Route path="" element={<RosterView />} />
+              <Route path="*" element={<AdminNotFound />} />
               <Route path="audit" element={<AuditTrailView />} />
-              <Route path="config" element={<ConfigView />} />
-              <Route path="*" element={<PageNotFound />} />
+              <Route path="" element={<ProtectedAdminRoute />}>
+                <Route path="config" element={<ConfigView />} />
+              </Route>
             </Route>
             < Route path="/create" element={<CreateRoster />} />
             {

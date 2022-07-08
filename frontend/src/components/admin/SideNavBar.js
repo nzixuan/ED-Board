@@ -8,13 +8,15 @@ import "./SideNavBar.css"
 
 
 function SideNavBar() {
-    const items = [{ label: "Edit Roster", pathname: "/admin", icon: "pi pi-book" },
-    { label: "Audit Log", pathname: "/admin/audit", icon: "pi pi-clock" },
-    { label: "Board Config", pathname: "/admin/config", icon: "pi pi-cog" }]
-
     const [user,] = useContext(UserContext)
     const navigate = useNavigate();
     let location = useLocation();
+
+    const items = user.role === "admin" || user.role === "super-admin" ? [{ label: "Edit Roster", pathname: "/admin", icon: "pi pi-book" },
+    { label: "Audit Log", pathname: "/admin/audit", icon: "pi pi-clock" },
+    { label: "Board Config", pathname: "/admin/config", icon: "pi pi-cog" }] :
+        [{ label: "Edit Roster", pathname: "/admin", icon: "pi pi-book" },
+        { label: "Audit Log", pathname: "/admin/audit", icon: "pi pi-clock" }]
 
     const signOut = () => {
         localStorage.removeItem('token')

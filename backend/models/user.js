@@ -11,7 +11,11 @@ const userSchema = mongoose.Schema({
     },
     role: {
         type: String,
-        enum: ['admin', 'guest'],
+        enum: ['admin', 'user', 'super-admin'],
+        required: true
+    },
+    approved: {
+        type: Boolean,
         required: true
     }
 }, { timestamps: true })
