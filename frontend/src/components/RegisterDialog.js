@@ -1,13 +1,11 @@
 import * as React from 'react';
 import { useState, useRef } from 'react';
-import { useNavigate } from "react-router-dom";
 import axios from 'axios'
 import { InputText } from 'primereact/inputtext';
 import { Button } from 'primereact/button';
 import { Messages } from 'primereact/messages';
 import { RadioButton } from 'primereact/radiobutton';
 import { Password } from 'primereact/password';
-import { Toast } from 'primereact/toast';
 
 
 
@@ -50,9 +48,6 @@ export default function RegisterDialog(props) {
 
     const fieldsValid = () => {
         const fieldsValid = [userNameValid(state.username), passwordValid(state.password), state.role !== '']
-        console.log(fieldsValid)
-        console.log(state.password)
-
         setValid(fieldsValid)
 
         if (fieldsValid[0] && fieldsValid[1] && fieldsValid[2]) {

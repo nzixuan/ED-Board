@@ -36,7 +36,9 @@ export default function CreateRoster(props) {
 
     async function handleSubmit() {
         try {
-            await axios.post(process.env.REACT_APP_API_URL + '/api/edboard/roster/massCreate', { username: user.username, rosters: rostersList })
+            const token = localStorage.getItem('token');
+            await axios.post(process.env.REACT_APP_API_URL + '/api/edboard/roster/massCreate', { username: user.username, rosters: rostersList }, { headers: { token: token } }
+            )
             props.setDisplayDialog(false)
 
         } catch (err) {

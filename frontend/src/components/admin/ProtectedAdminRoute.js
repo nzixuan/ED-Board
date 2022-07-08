@@ -1,8 +1,6 @@
-import React, { useContext, useState, useEffect } from "react";
-import { Navigate, Outlet } from "react-router-dom";
-import axios from 'axios'
+import React, { useContext } from "react";
+import { Outlet } from "react-router-dom";
 import { UserContext } from "../../context/UserContext";
-import SideNavBar from "./SideNavBar";
 import "./ProtectedRoute.css"
 import AdminNotFound from "./AdminNotFound";
 
@@ -10,7 +8,7 @@ import AdminNotFound from "./AdminNotFound";
 
 function ProtectedAdminRoute({ children }) {
 
-    const [user, setUser] = useContext(UserContext)
+    const [user,] = useContext(UserContext)
 
 
     if (user === null || user.role === null)

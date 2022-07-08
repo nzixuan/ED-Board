@@ -10,7 +10,6 @@ import { Divider } from 'primereact/divider';
 import { Toast } from 'primereact/toast';
 import { Dialog } from 'primereact/dialog';
 import { InputText } from 'primereact/inputtext';
-import { OverlayPanel } from 'primereact/overlaypanel';
 
 import "./ConfigView.css"
 
@@ -26,7 +25,6 @@ function ConfigView() {
     const [user,] = useContext(UserContext)
 
     const message = useRef(null);
-    const addStaff = useRef(null)
     const dialogMessage = useRef(null);
 
 
@@ -64,15 +62,16 @@ function ConfigView() {
                 boards = newConfig.boards
                 boardNames = newConfig.boardNames
             }
+            const token = localStorage.getItem('token');
             axios.post(process.env.REACT_APP_API_URL + '/api/edboard/config',
-                { username: user.username, boards: boards, boardNames: boardNames }).then((res) => {
+                { username: user.username, boards: boards, boardNames: boardNames }, { headers: { token: token } }).then((res) => {
                     toast.current.show({ severity: 'success', summary: 'Success', detail: 'Config Saved', life: 3000 });
                     loadData()
                 }).catch((err) => {
-                    if (err.response.data) {
-                        message.current.show({ severity: 'error', summary: '', detail: err.response.data.message });
+                    if (err.response && err.response.data && err.response.data.message) {
+                        toast.current.show({ severity: 'error', summary: 'Error', detail: err.response.data.message, life: 3000 });
                     } else {
-                        message.current.show({ severity: 'error', summary: '', detail: "Server Error" });
+                        toast.current.show({ severity: 'error', summary: 'Error', detail: "Server Error", life: 3000 });
                     }
                 })
         } catch (err) {

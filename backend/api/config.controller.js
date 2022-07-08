@@ -37,12 +37,19 @@ class ConfigController {
 
 
     static async setConfig(req, res, next) {
+
+
         const validationError = configValidation(req.body).error
         if (validationError)
             return res.status(400).json({ message: validationError.details[0].message })
         const boards = req.body.boards
         const boardNames = req.body.boardNames
         const username = req.body.username
+        if (req.user.username !== req.body.username)
+            return res.status(400).json({ message: "User is not authorised to perform this action" })
+        if (!(req.user.role === "admin" || req.user.role === "super-admin"))
+            return res.status(400).json({ message: "User is not authorised to perform this action" })
+
         await Config.findOneAndReplace({}, { boards: boards, boardNames: boardNames }, { upsert: true }).exec()
         try {
             createTrail({ username: username, type: "edit-config" })

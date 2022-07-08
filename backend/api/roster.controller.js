@@ -202,11 +202,13 @@ class RosterController {
     }
 
     static async deleteRoster(req, res, next) {
-
         const validationError = deleteRosterValidation(req.body).error
         if (validationError)
             return res.status(400).json({ message: validationError.details[0].message })
-        const result = await RostersList.deleteOne({ date: new Date(req.body.date) }).exec();
+        if (req.user.username !== req.body.username)
+            return res.status(400).json({ message: "User is not authorised to perform this action" })
+
+        await RostersList.deleteOne({ date: new Date(req.body.date) }).exec();
         try {
             createTrail({
                 username: req.body.username, type: "delete-roster", deletedDocumentDate: req.body.date

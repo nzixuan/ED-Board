@@ -19,19 +19,25 @@ router.route("/audit/create").post(AuditTrailController.createAudit)
 
 router.route("/roster/").get(RosterCtrl.viewRoster)
 router.route("/roster/convert").post(RosterCtrl.ExceltoJson)
-router.route("/roster/massCreate").post(RosterCtrl.massCreateRoster)
-router.route("/roster/create").post((req, res, next) => {
+router.route("/roster/massCreate").post(UserCtrl.verifyJWT, (req, res, next) => {
+    sem.take(() => {
+        const result = RosterCtrl.massCreateRoster(req, res, next)
+        sem.leave()
+        return result
+    })
+})
+router.route("/roster/create").post(UserCtrl.verifyJWT, (req, res, next) => {
     sem.take(() => {
         const result = RosterCtrl.createRoster(req, res, next)
         sem.leave()
         return result
     })
 })
-router.route("/roster/delete").post(RosterCtrl.deleteRoster)
+router.route("/roster/delete").post(UserCtrl.verifyJWT, RosterCtrl.deleteRoster)
 router.route("/roster/types").get(RosterCtrl.getTypes)
 router.route("/roster/later").get(RosterCtrl.viewLaterRoster)
 
-router.route("/config").post(ConfigController.setConfig)
+router.route("/config").post(UserCtrl.verifyJWT, ConfigController.setConfig)
 router.route("/config").get(ConfigController.getConfig)
 router.route("/config/allAssignments").get(ConfigController.getAllAssignments)
 router.route("/config/boards").get(ConfigController.getBoards)

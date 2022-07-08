@@ -83,8 +83,12 @@ export default function RosterView(props) {
     }, [displayAddRosterDialog]);
 
     const deleteRoster = (date) => {
-        axios.post(process.env.REACT_APP_API_URL + "/api/edboard/roster/delete", { username: user.username, date: date }).then((res) => {
+        const token = localStorage.getItem('token');
+        axios.post(process.env.REACT_APP_API_URL + "/api/edboard/roster/delete", { username: user.username, date: date }, { headers: { token: token } }).then((res) => {
             loadRostersList()
+        }).catch((err) => {
+            console.log(err)
+            toast.current.show({ severity: 'error', summary: 'Error', detail: err.response.data.message, life: 3000 });
         })
     }
 
@@ -129,7 +133,9 @@ export default function RosterView(props) {
         for (let i = 0; i < list.length; i++) {
             newRostersList.push(...list[i].rosters.map((roster) => { return { date: list[i].date, rosters: [roster] } }))
         }
-        axios.post(process.env.REACT_APP_API_URL + "/api/edboard/roster/massCreate", { username: user.username, rosters: newRostersList }).then((res) => {
+        const token = localStorage.getItem('token');
+
+        axios.post(process.env.REACT_APP_API_URL + "/api/edboard/roster/massCreate", { username: user.username, rosters: newRostersList }, { headers: { token: token } }).then((res) => {
             loadRostersList()
         })
     }
@@ -188,13 +194,16 @@ export default function RosterView(props) {
             }
             newRosters.rosters.sort((a, b) => { return a.staffType.localeCompare(b.staffType) })
             console.log(newRosters.rosters)
-
-            axios.post(process.env.REACT_APP_API_URL + '/api/edboard/roster/create', newRosters).then((res) => {
+            const token = localStorage.getItem('token');
+            axios.post(process.env.REACT_APP_API_URL + '/api/edboard/roster/create', newRosters, { headers: { token: token } }
+            ).then((res) => {
                 loadRostersList()
             })
         }).catch((err) => {
             //Show err
             console.log(err)
+            toast.current.show({ severity: 'error', summary: 'Error', detail: err.response.data.message, life: 3000 });
+
         })
     }
 
@@ -497,7 +506,7 @@ export default function RosterView(props) {
                                                             saveRosterList(newRostersList)
                                                             deleteRow.current.hide()
                                                             setRow(null);
-                                                            toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Product Deleted', life: 3000 });
+                                                            toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Row Deleted', life: 3000 });
                                                         }} />
                                                     </div>
                                                 </div>
