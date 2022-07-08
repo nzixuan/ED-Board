@@ -76,12 +76,11 @@ class Board extends Component {
         return (
             <div className="board">
                 <BoardHeader time={this.state.time} date={this.state.date} name={this.props.name}></BoardHeader>
-                {/* Max height */}
                 <div className="tables" >
                     {
-                        this.state.rosters.length > 0 && this.state.rosters.map((roster) => {
+                        this.state.rosters.length > 0 && this.state.rosters.map((roster, index) => {
                             if (roster.roster.length > 0)
-                                return <Table roster={roster} key={roster.staffType}></Table>
+                                return <Table roster={roster} key={roster.staffType} className={index % 2 === 0 ? "red" : "brown"}></Table>
                             return null
                         })
                     }

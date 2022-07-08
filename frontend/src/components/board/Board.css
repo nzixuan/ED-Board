@@ -10,7 +10,4 @@ div .board {
 
 .tables {
     display: flex;
-
-    /* flex-wrap: wrap; */
-    /* width: 100vw; */
 }
