@@ -14,6 +14,7 @@ import AuditTrailView from "./components/admin/AuditTrailView";
 import RosterView from "./components/admin/RosterView";
 import ProtectedAdminRoute from "./components/admin/ProtectedAdminRoute";
 import AdminNotFound from "./components/admin/AdminNotFound";
+import UserManagerView from "./components/admin/UserManagerView";
 
 function App() {
   const [boards, setBoards] = useState([]);
@@ -34,6 +35,7 @@ function App() {
               <Route path="audit" element={<AuditTrailView />} />
               <Route path="" element={<ProtectedAdminRoute />}>
                 <Route path="config" element={<ConfigView />} />
+                <Route path="users" element={<UserManagerView />} />
               </Route>
             </Route>
             < Route path="/create" element={<CreateRoster />} />

@@ -23,6 +23,23 @@ const loginValidation = (data => {
     return loginSchema.validate(data);
 })
 
+const changePasswordSchema = Joi.object({
+    username: Joi.string().required(),
+    password: Joi.string().required()
+})
+
+const changePasswordValidation = (data => {
+    return changePasswordSchema.validate(data);
+})
+
+const deleteUserSchema = Joi.object({
+    username: Joi.string().required(),
+})
+
+const deleteUserValidation = (data => {
+    return deleteUserSchema.validate(data);
+})
+
 //Audit
 
 const auditSchema = Joi.object({
@@ -122,5 +139,7 @@ module.exports = {
     rosterQueryValidation: rosterQueryValidation,
     massCreateValidation: massCreateValidation,
     deleteRosterValidation: deleteRosterValidation,
-    configValidation: configValidation
+    configValidation: configValidation,
+    changePasswordValidation: changePasswordValidation,
+    deleteUserValidation: deleteUserValidation
 }

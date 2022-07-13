@@ -329,7 +329,7 @@ export default function RosterView(props) {
     const actionBodyTemplate = (rowData) => {
         return (
             <React.Fragment>
-                <Button icon="pi pi-trash" className="p-button-rounded p-button-warning" onClick={(e) => {
+                <Button icon="pi pi-trash" className="p-button-rounded p-button-danger" onClick={(e) => {
                     setRow(rowData)
                     deleteRow.current.toggle(e)
                 }} />
@@ -488,7 +488,7 @@ export default function RosterView(props) {
                                                 }
                                                 <Column className="data-column" field="nd" header="ND" body={nameTemplate("nd")} headerClassName="header"
                                                     editor={(options) => textEditor("nd", rostersIndex, rosterindex)(options)} onCellEditComplete={onCellEditComplete}></Column>
-                                                <Column body={actionBodyTemplate} exportable={false} style={{ width: '4rem' }}></Column>
+                                                <Column body={actionBodyTemplate} headerClassName="header" exportable={false} style={{ width: '4rem' }}></Column>
 
                                             </DataTable>
 

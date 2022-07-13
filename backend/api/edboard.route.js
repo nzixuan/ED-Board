@@ -9,10 +9,14 @@ var sem = require('semaphore')(1);
 const router = express.Router()
 
 router.route("/user/login").post(UserCtrl.login)
+router.route("/user/logout").post(UserCtrl.logout)
 router.route("/user/verify").get(UserCtrl.verifyJWT, UserCtrl.verify)
 router.route("/user/register").post(UserCtrl.register)
-//TODO: handle timeout
-router.route("/user/logout").post(UserCtrl.logout)
+
+router.route("/user").get(UserCtrl.verifyJWT, UserCtrl.viewUsers)
+router.route("/user/password").post(UserCtrl.verifyJWT, UserCtrl.changePassword)
+router.route("/user/delete").post(UserCtrl.verifyJWT, UserCtrl.deleteUser)
+
 
 router.route("/audit/").get(AuditTrailController.viewAudit)
 router.route("/audit/create").post(AuditTrailController.createAudit)
