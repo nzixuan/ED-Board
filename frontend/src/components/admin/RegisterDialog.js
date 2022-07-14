@@ -13,8 +13,8 @@ import { UserContext } from "../../context/UserContext";
 export default function RegisterDialog(props) {
     const [user,] = useContext(UserContext)
     const message = useRef(null);
-    const [state, setState] = useState({ username: '', password: '', role: '' })
-    const [valid, setValid] = useState([true, true, true])
+    const [state, setState] = useState({ username: '', password: '', cpassword: '', role: '' })
+    const [valid, setValid] = useState([true, true, true, true])
     const roles = ['user', 'admin']
     const canCreateRoles = { "super-admin": ['user', 'admin'], "admin": ["user"] }
 
@@ -49,10 +49,10 @@ export default function RegisterDialog(props) {
     }
 
     const fieldsValid = () => {
-        const fieldsValid = [userNameValid(state.username), passwordValid(state.password), state.role !== '']
+        const fieldsValid = [userNameValid(state.username), passwordValid(state.password), state.password === state.cpassword, state.role !== '']
         setValid(fieldsValid)
 
-        if (fieldsValid[0] && fieldsValid[1] && fieldsValid[2]) {
+        if (fieldsValid[0] && fieldsValid[1] && fieldsValid[2] && fieldsValid[3]) {
             return true
         }
         return false
@@ -63,27 +63,41 @@ export default function RegisterDialog(props) {
         <div>
             <div className="field">
                 <label htmlFor="username" className="block text-900 font-medium mb-2">Username</label>
-                <InputText className={"w-full" + (valid[0] ? "" : " p-invalid")} id="username" type="text" value={state.username} onChange={(e) => setState({ ...state, username: e.target.value })} />
-                <small id="username-help" className={valid[0] ? "" : " p-error"} >4 - 10 alphanumeric characters</small>
+                <InputText autoComplete='false' className={"w-full" + (valid[0] ? "" : " p-invalid")} id="username" type="text" value={state.username} onChange={(e) => setState({ ...state, username: e.target.value })} />
+                {!valid[0] && <div className='flex align-items-center pt-2'>
+                    <i className="p-error pi pi-info-circle"></i><small id="username-help" className="pl-2 p-error" >4 - 10 alphanumeric characters</small>
+                </div>}
             </div>
             <div className="field">
-
                 <label htmlFor="password" className="block text-900 font-medium mb-2">Password</label>
-                <Password className={"w-full" + (valid[1] ? "" : " p-invalid")} feedback={false} inputClassName="w-full" id="password" toggleMask value={state.password} onChange={(e) => setState({ ...state, password: e.target.value })} />
-                <small id="username-help" className={valid[1] ? "" : " p-error"}>8 - 20 characters, at least one letter and one number</small>
+                <Password autoComplete='false' className={"w-full" + (valid[1] ? "" : " p-invalid")} feedback={false} inputClassName="w-full" id="password" toggleMask value={state.password} onChange={(e) => setState({ ...state, password: e.target.value })} />
+                {!valid[1] && <div className='flex align-items-center pt-2'>
+                    <i className="p-error pi pi-info-circle"></i><small id="password-help" className="pl-2 p-error">8 - 20 characters, at least one letter and one number</small>
+                </div>}
+            </div>
+            <div className="field">
+                <label htmlFor="cpassword" className="block text-900 font-medium mb-2">Confirm Password</label>
+                <Password className={"w-full" + (valid[2] ? "" : " p-invalid")} feedback={false} inputClassName="w-full" id="cpassword" toggleMask value={state.cpassword} onChange={(e) => setState({ ...state, cpassword: e.target.value })} />
+                {!valid[2] && <div className='flex align-items-center pt-2'>
+                    <i className="p-error pi pi-info-circle"></i><small id="cpassword-help" className="pl-2 p-error">Password does not match</small>
+                </div>}
             </div>
             <div className=" field">
                 <label htmlFor="role" className="block text-900 font-medium mb-2">Role</label>
-
                 <div className="formgroup-inline pt-2" >
                     {roles.map((role) => {
                         return <div key={role} className="field-radiobutton pr-4">
-                            <RadioButton className={valid[2] ? "" : " p-invalid"} inputId={role} name="role" value={role}
+                            <RadioButton className={valid[3] ? "" : " p-invalid"} inputId={role} name="role" value={role}
                                 disabled={!canCreateRoles[user.role] || !canCreateRoles[user.role].includes(role)} onChange={(e) => setState({ ...state, role: e.value })} checked={state.role === role} />
                             <label htmlFor={role}>{role}</label>
                         </div>
                     })}
                 </div>
+                {!valid[3] && <div className='flex align-items-center'>
+                    <i className="p-error pi pi-info-circle"></i>
+                    <small id="role-help" className="p-error pl-2">Role needs to be picked</small>
+                </div>}
+
             </div>
             <Messages className="w-full mb-3" ref={message}></Messages>
             <Button label="Sign Up" icon="pi pi-user" className="w-full" onClick={handleSubmit} />

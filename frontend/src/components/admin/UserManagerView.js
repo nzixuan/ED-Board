@@ -27,9 +27,7 @@ export default function UserManagerView(props) {
         const token = localStorage.getItem('token');
 
         axios.get(process.env.REACT_APP_API_URL + '/api/edboard/user', { headers: { token: token } }).then((res) => {
-            console.log(res.data.users)
             setUsers(res.data.users)
-
         }).catch((err) => {
 
         })
@@ -40,9 +38,7 @@ export default function UserManagerView(props) {
         loadData()
     }, []);
     useEffect(() => {
-        if (displayRegister === false)
-            loadData()
-
+        loadData()
     }, [displayRegister]);
 
     const toolbarTemplate = () => {
@@ -60,7 +56,6 @@ export default function UserManagerView(props) {
     return (
         <div>
             <Toast ref={toast} />
-
             <h2 className="heading">
                 User Manager
             </h2>

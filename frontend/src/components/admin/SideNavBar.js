@@ -47,13 +47,12 @@ function SideNavBar() {
             {items.map((item) => <MenuButton className={location.pathname === item.pathname ?
                 "navigation-button navigation-current" : "navigation-button navigation-away"}
                 label={item.label} icon={item.icon} onClick={() => navigate(item.pathname)} key={item.label} />)}
-            <Divider className="divider" />
+            <Divider className="divider mt-0" />
             <MenuButton className="navigation-button navigation-away" label="Change Password" icon="pi pi-id-card" onClick={() => setChangePassword(true)}></MenuButton>
             <Dialog visible={changePassword} className="w-full lg:w-3 md:w-6" contentClassName='border-round-bottom' header={"Change Password"}
                 resizable={false} blockScroll draggable={false} onHide={() => setChangePassword(false)}>
                 <ChangePasswordDialog setChangePassword={setChangePassword} toast={toast} self={true}></ChangePasswordDialog>
             </Dialog>
-
             <MenuButton className="navigation-button navigation-away" label="Sign Out" icon="pi pi-user-minus" onClick={signOut}></MenuButton>
 
         </div >
