@@ -22,6 +22,7 @@ router.route("/audit/").get(AuditTrailController.viewAudit)
 router.route("/audit/create").post(AuditTrailController.createAudit)
 
 router.route("/roster/").get(RosterCtrl.viewRoster)
+router.route("/roster/later").get(RosterCtrl.viewLaterRoster)
 router.route("/roster/convert").post(RosterCtrl.ExceltoJson)
 router.route("/roster/massCreate").post(UserCtrl.verifyJWT, (req, res, next) => {
     sem.take(() => {
@@ -39,10 +40,9 @@ router.route("/roster/create").post(UserCtrl.verifyJWT, (req, res, next) => {
 })
 router.route("/roster/delete").post(UserCtrl.verifyJWT, RosterCtrl.deleteRoster)
 router.route("/roster/types").get(RosterCtrl.getTypes)
-router.route("/roster/later").get(RosterCtrl.viewLaterRoster)
 
-router.route("/config").post(UserCtrl.verifyJWT, ConfigController.setConfig)
 router.route("/config").get(ConfigController.getConfig)
+router.route("/config").post(UserCtrl.verifyJWT, ConfigController.setConfig)
 router.route("/config/allAssignments").get(ConfigController.getAllAssignments)
 router.route("/config/boards").get(ConfigController.getBoards)
 

@@ -147,7 +147,7 @@ class UserController {
             || (req.user.role === "admin" && requestedUser.role)))
             return res.status(400).json({ message: "User is not authorised to perform this change" })
         await User.deleteOne({ _id: requestedUser._id });
-        return res.json({ message: "User deletion change success!" })
+        return res.json({ message: "User deletion success!" })
 
     }
 }

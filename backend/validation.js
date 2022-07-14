@@ -89,11 +89,19 @@ const addRosterListValidation = (data => {
 
 const rosterQuerySchema = Joi.object({
     date: Joi.date(),
-    board: Joi.string(),
+    board: Joi.string().required(),
 })
 
 const rosterQueryValidation = (data => {
     return rosterQuerySchema.validate(data)
+})
+
+const laterRosterQuerySchema = Joi.object({
+    date: Joi.date(),
+})
+
+const laterRosterQueryValidation = (data => {
+    return laterRosterQuerySchema.validate(data)
 })
 
 const deleteRosterSchema = Joi.object({
@@ -107,7 +115,7 @@ const deleteRosterValidation = (data => {
 
 const massCreateSchema = Joi.object({
     username: Joi.string().required(),
-    rosters: Joi.array().required().items(Joi.object({
+    rostersList: Joi.array().required().items(Joi.object({
         date: Joi.date().required(),
         rosters: Joi.array().required().items(rostersSchema)
     }))
@@ -141,5 +149,6 @@ module.exports = {
     deleteRosterValidation: deleteRosterValidation,
     configValidation: configValidation,
     changePasswordValidation: changePasswordValidation,
-    deleteUserValidation: deleteUserValidation
+    deleteUserValidation: deleteUserValidation,
+    laterRosterQueryValidation: laterRosterQueryValidation
 }

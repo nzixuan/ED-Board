@@ -1,7 +1,7 @@
 const { date } = require("joi")
 const Joi = require("joi")
 const RostersList = require("../models/roster.js")
-const { addRosterListValidation, rosterQueryValidation, massCreateValidation, deleteRosterValidation } = require("../validation.js")
+const { addRosterListValidation, rosterQueryValidation, massCreateValidation, deleteRosterValidation, laterRosterQueryValidation } = require("../validation.js")
 const formidable = require('formidable');
 const XLSX = require("xlsx");
 const { convert_to_json, createNewRoster, findTypes, editRoster, appendRoster } = require("./roster.handlers.js");
@@ -10,46 +10,6 @@ const { ConfigController } = require("./config.controller.js");
 const { ConnectionStates } = require("mongoose");
 
 class RosterController {
-
-    static async ExceltoJson(req, res, next) {
-        const form = new formidable.IncomingForm({ multiples: true });
-        let rosters = []
-        form.parse(req, async (err, fields, files) => {
-
-            const entries = files["Upload Excel"].length ? files["Upload Excel"] : [files["Upload Excel"]]
-            // Loop through all workbooks
-
-            for (let i = 0; i < entries.length; i++) {
-                let roster = []
-                const f = entries[i];
-                const path = f.filepath;
-                const workbook = XLSX.readFile(path);
-                //Loop through all sheets
-                for (let j = 0; j < workbook.SheetNames.length; j++) {
-                    const name = workbook.SheetNames[j]
-
-                    try {
-                        roster = await convert_to_json(workbook.Sheets[name])
-
-                    } catch (e) {
-                        console.log(e)
-                        return res.status(400).json({ message: "Error converting excel", rosters: [] })
-
-                    }
-                    const validationError = addRosterListValidation({ username: "admin", ...roster }).error
-                    if (validationError)
-                        return res.status(400).json({ message: validationError.details[0].message, rosters: [] })
-                    if (roster.rosters[0].roster.length > 0)
-                        rosters.push(roster)
-                }
-            }
-            if (rosters.length === 0)
-                return res.status(400).json({ message: "Empty roster", rosters: [] })
-            return res.json({ message: "Convert success", rosters: rosters });
-
-        });
-
-    }
 
     static async viewRoster(req, res, next) {
 
@@ -97,7 +57,7 @@ class RosterController {
 
     static async viewLaterRoster(req, res, next) {
 
-        const validationError = rosterQueryValidation(req.query).error
+        const validationError = laterRosterQueryValidation(req.query).error
         if (validationError)
             return res.status(400).json({ message: validationError.details[0].message })
 
@@ -111,6 +71,45 @@ class RosterController {
 
     }
 
+    static async ExceltoJson(req, res, next) {
+        const form = new formidable.IncomingForm({ multiples: true });
+        let rosters = []
+        form.parse(req, async (err, fields, files) => {
+
+            const entries = files["Upload Excel"].length ? files["Upload Excel"] : [files["Upload Excel"]]
+            // Loop through all workbooks
+
+            for (let i = 0; i < entries.length; i++) {
+                let roster = []
+                const f = entries[i];
+                const path = f.filepath;
+                const workbook = XLSX.readFile(path);
+                //Loop through all sheets
+                for (let j = 0; j < workbook.SheetNames.length; j++) {
+                    const name = workbook.SheetNames[j]
+
+                    try {
+                        roster = await convert_to_json(workbook.Sheets[name])
+
+                    } catch (e) {
+                        console.log(e)
+                        return res.status(400).json({ message: "Error converting excel", rosters: [] })
+
+                    }
+                    const validationError = addRosterListValidation({ username: "admin", ...roster }).error
+                    if (validationError)
+                        return res.status(400).json({ message: validationError.details[0].message, rosters: [] })
+                    if (roster.rosters[0].roster.length > 0)
+                        rosters.push(roster)
+                }
+            }
+            if (rosters.length === 0)
+                return res.status(400).json({ message: "Empty roster", rosters: [] })
+            return res.json({ message: "Convert success", rosters: rosters });
+
+        });
+
+    }
 
     static async massCreateRoster(req, res, next) {
 
@@ -118,7 +117,7 @@ class RosterController {
         if (validationError)
             return res.status(400).json({ message: validationError.details[0].message })
 
-        const rosters = req.body.rosters
+        const rosters = req.body.rostersList
         const username = req.body.username
         for (let i = 0; i < rosters.length; i++) {
             const roster = rosters[i]
@@ -177,28 +176,6 @@ class RosterController {
         const types = await findTypes(date)
 
         return res.json(types)
-    }
-
-    static async searchName(req, res, next) {
-
-        const query = { date: req.query.date, staffType: req.query.name }
-        const validationError = rosterQueryValidation(query).error
-        if (validationError)
-            return res.status(400).json({ message: validationError.details[0].message })
-        const result = await RostersList.aggregate([
-            //Some date check 
-            { $unwind: "$rosters" },
-            { $unwind: "$rosters.roster" },
-            {
-
-                $match: {
-                    $or: [{ "rosters.roster.am.name": "ZX NG" }, { "rosters.roster.pm.name": "ZX NG" }]
-                }
-            },
-            { $replaceWith: "$rosters" },
-        ])
-
-        return res.json({ message: "Searched", result: result })
     }
 
     static async deleteRoster(req, res, next) {

@@ -1,0 +1,50 @@
+openapi: "3.0.2"
+info:
+  title: ED Board API
+  version: "1.0"
+servers:
+  - url: https://localhost:3001/api/edboard
+tags: [{ name: "user" }, { name: "audit" }, { name: "roster" }]
+paths:
+  /user/login:
+    $ref: "user.yml#/login"
+  /user/logout:
+    $ref: "user.yml#/logout"
+  /user/verify:
+    $ref: "user.yml#/verify"
+  /user/register:
+    $ref: "user.yml#/register"
+  /user:
+    $ref: "user.yml#/view-user"
+  /user/password:
+    $ref: "user.yml#/password"
+  /user/delete:
+    $ref: "user.yml#/delete"
+
+  /audit:
+    $ref: "audit.yml#/audit"
+  /audit/create:
+    $ref: "audit.yml#/create"
+
+  /roster:
+    $ref: "roster.yml#/roster"
+  /roster/viewLater:
+    $ref: "roster.yml#/viewLater"
+  /roster/convert:
+    $ref: "roster.yml#/convert"
+
+  /roster/massCreate:
+    $ref: "roster.yml#/massCreate"
+  /roster/create:
+    $ref: "roster.yml#/create"
+  /roster/types:
+    $ref: "roster.yml#/types"
+  /roster/delete:
+    $ref: "roster.yml#/delete"
+
+  /config:
+    $ref: "config.yml#/config"
+  /config/allAssignments:
+    $ref: "config.yml#/getAllAssignments"
+  /config/boards:
+    $ref: "config.yml#/boards"

@@ -1,0 +1,88 @@
+config:
+  get:
+    tags:
+      - "config"
+    description: View config
+    responses:
+      200:
+        description: OK
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                boardName:
+                  type: object
+                boards:
+                  type: object
+  post:
+    tags:
+      - "config"
+    description: Edit Config
+    parameters:
+      - $ref: "commons.yml#/parameters/token"
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              boardName:
+                type: object
+              boards:
+                type: object
+
+    responses:
+      "200":
+        description: OK
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: Config Set
+      "400":
+        description: Bad Request
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: User is not authorised to perform this action
+getAllAssignments:
+  get:
+    tags:
+      - "config"
+    description: Get all assignments from board
+    responses:
+      200:
+        description: OK
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                doctor:
+                  type: array
+                  example: ["SNR DR 1", "SNR DR 2", "SNR DR 3", "SNR MO"]
+                nurse:
+                  type: array
+                  example: ["Nurse In-Charge", "Nursing Officer I/C"]
+boards:
+  get:
+    tags:
+      - "config"
+    description: View boards
+    responses:
+      200:
+        description: OK
+        content:
+          application/json:
+            schema:
+              type: array
+              example: ["EDX_OBS", "EDX", "COUNTER_4"]

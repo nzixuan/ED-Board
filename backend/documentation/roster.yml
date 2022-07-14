@@ -1,0 +1,295 @@
+roster:
+  get:
+    tags:
+      - "roster"
+    description: View roster
+    parameters:
+      - in: query
+        name: date
+        schema:
+          type: string
+      - in: query
+        name: board
+        required: true
+        schema:
+          type: string
+    responses:
+      200:
+        description: OK
+        content:
+          application/json:
+            schema:
+              type: array
+              example:
+                {
+                  rosters:
+                    [
+                      {
+                        "staffType": "doctor",
+                        "roster":
+                          [
+                            {
+                              "assignment": "SNR DR 1",
+                              "am": { "name": "Z X NG" },
+                              "pm": { "name": "M C CHIA" },
+                            },
+                            {
+                              "assignment": "REGISTRAR (R3)",
+                              "am": { "name": "M R DEE (R3/SC)#" },
+                              "straddle1": { "name": "YU QUAN# [8PM-2AM]" },
+                              "straddle2":
+                                { "name": "Testing Name [1AM - 3PM]" },
+                            },
+                          ],
+                      },
+                    ],
+                  timeString: "2:54:23 PM",
+                  dateString: "Thursday, 14/07/2022",
+                }
+      400:
+        description: Bad Request
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: board is required
+
+viewLater:
+  get:
+    tags:
+      - "roster"
+    description: View roster after date, today's date used if no date is given
+    parameters:
+      - in: query
+        name: date
+        schema:
+          type: string
+    responses:
+      200:
+        description: OK
+        content:
+          application/json:
+            schema:
+              type: array
+              example:
+                [
+                  {
+                    "_id": "62c7fc7e1f601d8e7b0138d7",
+                    "date": "2022-07-31T16:00:00.000Z",
+                    "rosters":
+                      [
+                        {
+                          "staffType": "doctor",
+                          "roster":
+                            [
+                              {
+                                "assignment": "SNR DR 1",
+                                "am": { "name": "Z X NG" },
+                                "pm": { "name": "M C CHIA" },
+                              },
+                              {
+                                "assignment": "REGISTRAR (R3)",
+                                "am": { "name": "M R DEE (R3/SC)#" },
+                                "straddle1": { "name": "YU QUAN# [8PM-2AM]" },
+                                "straddle2":
+                                  { "name": "Testing Name [1AM - 3PM]" },
+                              },
+                            ],
+                        },
+                      ],
+                  },
+                ]
+      400:
+        description: Bad Request
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+
+convert:
+  post:
+    tags:
+      - "roster"
+    description: Convert Excel files to json
+    requestBody:
+      required: true
+      content:
+        multipart/form-data:
+          schema:
+            properties:
+              # The property name 'file' will be used for all files.
+              Upload Excel:
+                type: array
+                items:
+                  type: string
+                  format: binary
+                  example: "DoctorsList.xlsx"
+    responses:
+      "200":
+        description: OK
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: Convert success
+massCreate:
+  post:
+    tags:
+      - "roster"
+    description: Create/edit/append multiple rosters
+    parameters:
+      - $ref: "commons.yml#/parameters/token"
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              username:
+                $ref: "commons.yml#/properties/username"
+              rostersList:
+                $ref: "commons.yml#/properties/rostersList"
+
+    responses:
+      "200":
+        description: OK
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: Mass Roster Created
+      "400":
+        description: Bad Request
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: username is required
+
+create:
+  post:
+    tags:
+      - "roster"
+    description: Create new roster
+    parameters:
+      - $ref: "commons.yml#/parameters/token"
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              username:
+                $ref: "commons.yml#/properties/username"
+              date:
+                $ref: "commons.yml#/properties/date"
+              rosters:
+                $ref: "commons.yml#/properties/rosters"
+
+    responses:
+      "200":
+        description: OK
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: Roster created
+      "400":
+        description: Bad Request
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: username is required
+types:
+  get:
+    tags:
+      - "roster"
+    description: View distinct staff types
+    parameters:
+      - in: query
+        name: date
+        required: true
+        schema:
+          type: string
+    responses:
+      200:
+        description: OK
+        content:
+          application/json:
+            schema:
+              type: array
+              example: ["doctor", "nurse"]
+      400:
+        description: Bad Request
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: query date is required
+delete:
+  post:
+    tags:
+      - "roster"
+    description: Create/edit/append multiple rosters
+    parameters:
+      - $ref: "commons.yml#/parameters/token"
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              username:
+                $ref: "commons.yml#/properties/username"
+              date:
+                $ref: "commons.yml#/properties/date"
+
+    responses:
+      "200":
+        description: OK
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: Roster deleted
+      "400":
+        description: Bad Request
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: User is not authorised to perform this action
