@@ -1,0 +1,92 @@
+audit:
+  get:
+    tags:
+      - "audit"
+    description: view pages of audits
+    parameters:
+      - in: query
+        name: auditPerPage
+        schema:
+          type: integer
+      - in: query
+        name: page
+        schema:
+          type: integer
+      - in: query
+        name: date
+        schema:
+          type: string
+    responses:
+      200:
+        description: OK
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                audits:
+                  type: array
+                  example: [{ _id: 1 }, { _id: 2 }, { _id: 3 }]
+                page:
+                  type: integer
+                  example: 0
+                filters:
+                  type: object
+                  example:
+                    {
+                      "$gt": "2022-05-24T00:00:00.000Z",
+                      "$lt": "2022-05-25T00:00:00.000Z",
+                    }
+                entries_per_page:
+                  type: integer
+                  example: 15
+                total_results:
+                  type: integer
+                  example: 10
+create:
+  post:
+    tags:
+      - "audit"
+    description: Create new audit trail
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              username:
+                type: string
+                example: myUser
+              type:
+                type: string
+                example: login
+                enum: ["login", "logout", "edit-roster", "create-roster"]
+              delta:
+                type: object
+                example: {}
+              documentId:
+                type: string
+                example: 628db30b5ec7551a75939509
+
+    responses:
+      "200":
+        description: OK
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: Trail created
+      "400":
+        description: Bad Request
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: username is required

@@ -1,0 +1,269 @@
+login:
+  post:
+    tags:
+      - "user"
+    description: Log in to API
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              username:
+                $ref: "commons.yml#/properties/username"
+              password:
+                $ref: "commons.yml#/properties/password"
+
+    responses:
+      "200":
+        description: OK
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: Success
+                token:
+                  $ref: "commons.yml#/properties/token"
+      "400":
+        description: Bad Request
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: Invalid Username or Password
+logout:
+  post:
+    tags:
+      - "user"
+    description: Audit user logging out
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              username:
+                $ref: "commons.yml#/properties/username"
+    responses:
+      "200":
+        description: OK
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: User has logged out
+      "400":
+        description: Bad Request
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: username is required
+
+verify:
+  get:
+    tags:
+      - "user"
+    description: verify if user is logged in
+    parameters:
+      - $ref: "commons.yml#/parameters/token"
+    responses:
+      200:
+        description: OK
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                isLoggedIn:
+                  type: boolean
+                  example: true
+                username:
+                  $ref: "commons.yml#/properties/username"
+                role:
+                  type: string
+                  enum: ["admin", "guest"]
+                  example: admin
+      "400":
+        description: Bad Request
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                isLoggedIn:
+                  type: boolean
+                  example: false
+                message:
+                  type: string
+                  example: Failed To Authenticate
+register:
+  post:
+    tags:
+      - "user"
+    description: Register new user
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              username:
+                $ref: "commons.yml#/properties/username"
+              password:
+                $ref: "commons.yml#/properties/password"
+              role:
+                type: string
+                example: admin
+    responses:
+      "200":
+        description: OK
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: User Registered
+      "400":
+        description: Bad Request
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: Username has already been taken`
+view-user:
+  get:
+    tags:
+      - "user"
+    description: View users
+    parameters:
+      - $ref: "commons.yml#/parameters/token"
+    responses:
+      "200":
+        description: OK
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: Success!
+                users:
+                  type: array
+                  example:
+                    [
+                      {
+                        _id: 627e07a47375070acd95d6da,
+                        username: myUsername,
+                        password: $2b$10$wFpaMpwg0ulhvgCOovpHNOwm5M2MfYUFcmp4p9E3bEtRiItWWvpb2,
+                        role: admin,
+                      },
+                    ]
+      "400":
+        description: Bad Request
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: "Server Error"
+password:
+  post:
+    tags:
+      - "user"
+    description: Change user's password
+    parameters:
+      - $ref: "commons.yml#/parameters/token"
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              username:
+                $ref: "commons.yml#/properties/username"
+              password:
+                $ref: "commons.yml#/properties/password"
+    responses:
+      "200":
+        description: OK
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: Password change success!
+      "400":
+        description: Bad Request
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: "User is not authorised to perform this change"
+
+delete:
+  post:
+    tags:
+      - "user"
+    description: Delete user
+    parameters:
+      - $ref: "commons.yml#/parameters/token"
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              username:
+                $ref: "commons.yml#/properties/username"
+    responses:
+      "200":
+        description: OK
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: User deletion success!
+      "400":
+        description: Bad Request
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: "User is not authorised to perform this change"

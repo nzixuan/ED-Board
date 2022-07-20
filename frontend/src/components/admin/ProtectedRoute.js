@@ -2,6 +2,9 @@ import React, { useContext, useState, useEffect } from "react";
 import { Navigate, Outlet } from "react-router-dom";
 import axios from 'axios'
 import { UserContext } from "../../context/UserContext";
+import SideNavBar from "./SideNavBar";
+import "./ProtectedRoute.css"
+
 
 function ProtectedRoute({ children }) {
 
@@ -26,7 +29,13 @@ function ProtectedRoute({ children }) {
     if (loggedIn == null)
         return null
 
-    return loggedIn ? <Outlet /> : <Navigate to="/login" />;
+    return loggedIn ? (
+        <div className="page">
+            <SideNavBar></SideNavBar>
+            <div className="dashboard" >
+                <Outlet /></div>
+        </div>
+    ) : <Navigate to="/login" />;
 }
 
 export default ProtectedRoute;

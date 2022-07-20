@@ -6,7 +6,7 @@ Joi.objectId = require('joi-objectid')(Joi)
 const registerSchema = Joi.object({
     username: Joi.string().min(4).max(30).alphanum().required(),
     password: Joi.string().required().min(4).max(30),
-    role: Joi.string().required().valid('admin', 'guest')
+    role: Joi.string().required().valid('admin', 'user')
 
 })
 
@@ -21,6 +21,23 @@ const loginSchema = Joi.object({
 
 const loginValidation = (data => {
     return loginSchema.validate(data);
+})
+
+const changePasswordSchema = Joi.object({
+    username: Joi.string().required(),
+    password: Joi.string().required()
+})
+
+const changePasswordValidation = (data => {
+    return changePasswordSchema.validate(data);
+})
+
+const deleteUserSchema = Joi.object({
+    username: Joi.string().required(),
+})
+
+const deleteUserValidation = (data => {
+    return deleteUserSchema.validate(data);
 })
 
 //Audit
@@ -72,11 +89,19 @@ const addRosterListValidation = (data => {
 
 const rosterQuerySchema = Joi.object({
     date: Joi.date(),
-    board: Joi.string(),
+    board: Joi.string().required(),
 })
 
 const rosterQueryValidation = (data => {
     return rosterQuerySchema.validate(data)
+})
+
+const laterRosterQuerySchema = Joi.object({
+    date: Joi.date(),
+})
+
+const laterRosterQueryValidation = (data => {
+    return laterRosterQuerySchema.validate(data)
 })
 
 const deleteRosterSchema = Joi.object({
@@ -90,7 +115,7 @@ const deleteRosterValidation = (data => {
 
 const massCreateSchema = Joi.object({
     username: Joi.string().required(),
-    rosters: Joi.array().required().items(Joi.object({
+    rostersList: Joi.array().required().items(Joi.object({
         date: Joi.date().required(),
         rosters: Joi.array().required().items(rostersSchema)
     }))
@@ -107,7 +132,7 @@ const massCreateValidation = (data => {
 const configSchema = Joi.object({
     username: Joi.string().required(),
     boards: Joi.object().required(),
-    boardNames: Joi.object().required()
+    boardNames: Joi.object().required(),
 })
 
 const configValidation = (data => {
@@ -122,5 +147,8 @@ module.exports = {
     rosterQueryValidation: rosterQueryValidation,
     massCreateValidation: massCreateValidation,
     deleteRosterValidation: deleteRosterValidation,
-    configValidation: configValidation
+    configValidation: configValidation,
+    changePasswordValidation: changePasswordValidation,
+    deleteUserValidation: deleteUserValidation,
+    laterRosterQueryValidation: laterRosterQueryValidation
 }

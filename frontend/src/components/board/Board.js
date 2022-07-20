@@ -1,10 +1,7 @@
 import React, { Component } from "react";
 import axios from 'axios'
 
-import 'primereact/resources/themes/saga-blue/theme.css';
-import 'primereact/resources/primereact.min.css';
-import 'primeicons/primeicons.css';
-import 'primeflex/primeflex.css';
+
 import Table from "./Table";
 import BoardHeader from "./ BoardHeader";
 import 'roboto-fontface/css/roboto/roboto-fontface.css'
@@ -21,7 +18,7 @@ class Board extends Component {
     async loadData() {
         try {
             //TODO: Remove date
-            const data = await axios.get(process.env.REACT_APP_API_URL + '/api/edboard/roster/', { params: { date: "05/26/2022", board: this.props.name } })
+            const data = await axios.get(process.env.REACT_APP_API_URL + '/api/edboard/roster/', { params: { board: this.props.name } })
             let rosters = data.data.rosters
             rosters.sort((a, b) => {
                 if (a.staffType === "doctor") {
@@ -77,18 +74,16 @@ class Board extends Component {
     render() {
 
         return (
-            <div className="Board">
+            <div className="board">
                 <BoardHeader time={this.state.time} date={this.state.date} name={this.props.name}></BoardHeader>
-                {/* Max height */}
-                <div className=" flex items-center justify-center flex-wrap" >
+                <div className="tables" >
                     {
-                        this.state.rosters.length > 0 && this.state.rosters.map((roster) => {
+                        this.state.rosters.length > 0 && this.state.rosters.map((roster, index) => {
                             if (roster.roster.length > 0)
-                                return <Table roster={roster} key={roster.staffType}></Table>
+                                return <Table roster={roster} key={roster.staffType} className={index % 2 === 0 ? "red" : "brown"}></Table>
                             return null
                         })
                     }
-
                 </div>
             </div >
         )

@@ -1,10 +1,9 @@
 body {
   margin: 0;
-  background-color: var(--surface-ground);
+  background-color: white;
   font-family: var(--font-family);
   font-weight: normal;
   color: var(--text-color);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-
 }

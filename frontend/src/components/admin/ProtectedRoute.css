@@ -1,0 +1,13 @@
+* {
+    --barWidth: 13rem
+}
+
+.page {
+    display: flex;
+}
+
+.dashboard {
+    flex-grow: 1;
+    width: 100%;
+    padding-left: var(--barWidth);
+}

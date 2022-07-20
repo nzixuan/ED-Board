@@ -16,3 +16,8 @@ sudo systemctl start mongod
 sudo systemctl status mongod
 edit .env files
 
+
+bug list:
+
+*Front end 
+Two duplicated front rows in front end will be both shown as selected when one is selected.

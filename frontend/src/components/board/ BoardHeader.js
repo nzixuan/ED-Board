@@ -10,12 +10,12 @@ export default function BoardHeader(props) {
     return (
 
         <div className="flex justify-content-center align-content-end align-items-end">
-            <h2 className="mx-2 text-sm">{props.date}</h2>
+            <h2 className="mx-2 text-m">{props.date}</h2>
             <div className="flex-grow-1 flex justify-content-center align-items-end">
                 <h1 className="text-2xl cursor-pointer" onClick={() => { navigate("/") }}>
                     {props.name}
                 </h1>
-                <h3 className="px-2 text-xs font-normal ">{"Updated at " + props.time}</h3>
+                <h3 className="px-2 text-sm font-normal ">{"Updated at " + props.time}</h3>
             </div>
 
         </div>

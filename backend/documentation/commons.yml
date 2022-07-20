@@ -1,0 +1,57 @@
+properties:
+  username:
+    type: string
+    example: myUser
+  password:
+    type: string
+    example: myPassword
+  token:
+    type: string
+    example: Bearer 102i3joekaxnz,mvnxcijzkvlckj
+  date:
+    type: string
+    example: 5/27/22
+  rostersList:
+    type: array
+    example:
+      [
+        {
+          "date": "5/27/22",
+          "rosters":
+            [
+              "staffType": "doctor",
+              "roster":
+                [
+                  {
+                    "assignment": "SNR WDR 1",
+                    "am": { "name": "Z X NG" },
+                    "pm": { "name": "M CHONG" },
+                  },
+                ],
+            ],
+        },
+      ]
+  rosters:
+    type: array
+    example:
+      [
+        {
+          "staffType": "doctor",
+          "roster":
+            [
+              {
+                "assignment": "SNR DR 1",
+                "am": { "name": "Z X NG" },
+                "pm": { "name": "M CHONG" },
+              },
+            ],
+        },
+      ]
+
+parameters:
+  token:
+    in: header
+    name: token
+    schema:
+      type: string
+    required: true

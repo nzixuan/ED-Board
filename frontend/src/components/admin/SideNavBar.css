@@ -1,0 +1,118 @@
+.bar {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    align-content: flex-start;
+    justify-content: flex-start;
+    position: fixed;
+    z-index: 5;
+
+    height: 100vh;
+    width: var(--barWidth);
+
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+    border-style: solid;
+    border-color: var(--surface-300);
+    border-width: 1px;
+    background-color: white;
+}
+
+.topbar {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    color: var(--surface-900);
+    font-weight: bold;
+    font-size: 100%;
+    background-color: white;
+    height: 3rem;
+    width: calc(var(--barWidth) - 1rem);
+    padding-left: 0.75rem;
+    padding-right: 1rem;
+
+}
+
+.icon {
+    padding: 0.25rem;
+    margin-right: 0.25rem;
+    cursor: pointer;
+    transition-property: background-color, border-color, color;
+    transition-duration: 150ms;
+    border-radius: 100%;
+}
+
+.icon:hover {
+    background-color: var(--surface-300);
+}
+
+.logo {
+    cursor: pointer;
+}
+
+.icon:active {
+    background-color: var(--surface-500);
+}
+
+.divider {
+    margin-top: 0.5rem !important;
+    margin-bottom: 0rem !important;
+
+}
+
+.menu-button {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    color: var(--surface-900);
+    font-size: .875rem;
+    background-color: white;
+    height: 3rem;
+    width: var(--barWidth);
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+    transition-property: background-color, color;
+    transition-duration: 150ms;
+    cursor: pointer;
+    border: 0px;
+    border-right: 1px;
+    border-color: var(--surface-300);
+    border-style: solid;
+
+}
+
+.menu-icon {
+    margin-right: 0.5rem;
+}
+
+div.menu-button:active {
+    background-color: var(--surface-500);
+
+}
+
+/* 
+.navigation-current:active,
+.navigation-away:active {
+    color: var(--primary-600);
+} */
+
+
+.navigation-current {
+    color: var(--text-color-secondary);
+    background-color: var(--surface-300);
+}
+
+.navigation-current:hover {
+    background-color: var(--surface-400);
+
+}
+
+.navigation-away {
+    color: var(--text-color-secondary);
+    background-color: white;
+
+}
+
+.navigation-away:hover {
+    background-color: var(--surface-200);
+}

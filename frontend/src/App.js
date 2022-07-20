@@ -3,15 +3,18 @@ import { useState, useEffect } from 'react';
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import PageNotFound from './components/PageNotFound';
 import ProtectedRoute from './components/admin/ProtectedRoute';
-import AdminView from './components/admin/AdminView'
 import SignIn from "./components/SignIn";
 import LandingPage from "./components/LandingPage";
 import { UserProvider } from "./context/UserContext";
 import CreateRoster from "./components/admin/CreateRoster";
 import ConfigView from "./components/admin/ConfigView"
-import Board from "./components/Board"
+import Board from "./components/board/Board"
 import axios from "axios";
 import AuditTrailView from "./components/admin/AuditTrailView";
+import RosterView from "./components/admin/RosterView";
+import ProtectedAdminRoute from "./components/admin/ProtectedAdminRoute";
+import AdminNotFound from "./components/admin/AdminNotFound";
+import UserManagerView from "./components/admin/UserManagerView";
 
 function App() {
   const [boards, setBoards] = useState([]);
@@ -27,11 +30,13 @@ function App() {
             <Route exact path="/" element={<LandingPage boards={boards} />} />
             <Route exact path="/login" element={<SignIn />} />
             <Route path="/admin" element={<ProtectedRoute />}>
-              <Route path="" element={<AdminView />} />
-              <Route path="create" element={<CreateRoster />} />
+              <Route path="" element={<RosterView />} />
+              <Route path="*" element={<AdminNotFound />} />
               <Route path="audit" element={<AuditTrailView />} />
-              <Route path="config" element={<ConfigView />} />
-              <Route path="*" element={<PageNotFound />} />
+              <Route path="" element={<ProtectedAdminRoute />}>
+                <Route path="config" element={<ConfigView />} />
+                <Route path="users" element={<UserManagerView />} />
+              </Route>
             </Route>
             < Route path="/create" element={<CreateRoster />} />
             {

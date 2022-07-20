@@ -1,8 +1,11 @@
 const RostersList = require("../models/roster.js")
 const { createTrail } = require("./auditTrail.controller")
 const XLSX = require("xlsx");
+const diff = require('deep-diff');
+const { getAssignments } = require("./config.controller.js");
 
-const convert_to_json = (sheet) => {
+async function convert_to_json(sheet) {
+
     let json = {}
     if (!sheet["E1"])
         return {}
@@ -73,13 +76,22 @@ const convert_to_json = (sheet) => {
                 }
             }
         }
-
-
         rosters.roster = Object.values(roster)
+    }
+
+    const assignList = await getAssignments()
+    if (assignList.hasOwnProperty(rosters.staffType)) {
+        const assign = assignList[rosters.staffType]
+        const currentAssign = new Set(rosters.roster.map((staff) => staff.assignment))
+        assign.forEach(element => {
+            if (!currentAssign.has(element))
+                rosters.roster.push({ assignment: element })
+        });
     }
 
 
     json.rosters = [rosters]
+
 
     return json
 }
@@ -96,6 +108,8 @@ const findShift = (jsa, columnNumber) => {
 }
 
 const formatShift = (shift) => {
+    if (!shift || typeof shift !== "string")
+        return shift
     const lower = shift.toLowerCase().replace(/\s/g, '')
     return lower
 }
@@ -117,16 +131,23 @@ async function createNewRoster(username, date, rosters) {
 
 async function editRoster(username, date, rosters) {
 
+    let edited = false;
+
     const db = await RostersList.findOne({ date: date },).exec()
     for (let i = 0; i < db.rosters.length; i++) {
         if (db.rosters[i].staffType === rosters[0].staffType) {
-            if (db.rosters[i] === rosters[0])
-                return
+
+            const delta = diff(JSON.parse(JSON.stringify(db.rosters[i])), rosters[0])
+            // console.log(delta)
+            if (!delta)
+                return db
             db.rosters[i] = rosters[0]
         }
     }
+
     await db.save()
     //TODO: Add Delta
+
     createTrail({
         username: username, type: "edit-roster", documentId: db._id.toString()
     })
@@ -160,18 +181,3 @@ module.exports = {
     editRoster: editRoster,
     appendRoster: appendRoster
 }
-
-// var combined_rosters = []
-// rosters.forEach((roster) => {
-//     var existing = combined_rosters.filter((x, y) => {
-//         return x.date === roster.date
-//     })
-
-//     if (existing.length) {
-//         var existingIndex = combined_rosters.indexOf(existing[0]);
-//         combined_rosters[existingIndex].roster = combined_rosters[existingIndex].roster.concat(roster.roster);
-//     } else {
-//         combined_rosters.push(roster)
-//     }
-
-// })
