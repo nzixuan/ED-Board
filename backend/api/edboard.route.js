@@ -25,15 +25,15 @@ router.route("/roster/").get(RosterCtrl.viewRoster)
 router.route("/roster/later").get(RosterCtrl.viewLaterRoster)
 router.route("/roster/convert").post(RosterCtrl.ExceltoJson)
 router.route("/roster/massCreate").post(UserCtrl.verifyJWT, (req, res, next) => {
-    sem.take(() => {
-        const result = RosterCtrl.massCreateRoster(req, res, next)
+    sem.take(async () => {
+        const result = await RosterCtrl.massCreateRoster(req, res, next)
         sem.leave()
         return result
     })
 })
 router.route("/roster/create").post(UserCtrl.verifyJWT, (req, res, next) => {
-    sem.take(() => {
-        const result = RosterCtrl.createRoster(req, res, next)
+    sem.take(async () => {
+        const result = await RosterCtrl.createRoster(req, res, next)
         sem.leave()
         return result
     })

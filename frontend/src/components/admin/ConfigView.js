@@ -146,7 +146,7 @@ function ConfigView() {
             <Toast ref={toast} />
 
             <h2 className="heading">
-                Assignment Config
+                Board Config
             </h2>
             <div className="content" >
                 <div className="card">
