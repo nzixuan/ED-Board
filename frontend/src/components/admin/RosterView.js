@@ -135,7 +135,7 @@ export default function RosterView(props) {
         }
         const token = localStorage.getItem('token');
 
-        axios.post(process.env.REACT_APP_API_URL + "/api/edboard/roster/massCreate", { username: user.username, rosters: newRostersList }, { headers: { token: token } }).then((res) => {
+        axios.post(process.env.REACT_APP_API_URL + "/api/edboard/roster/massCreate", { username: user.username, rostersList: newRostersList }, { headers: { token: token } }).then((res) => {
             loadRostersList()
         })
     }
