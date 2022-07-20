@@ -98,7 +98,6 @@ export default function RosterView(props) {
                 const today = new Date()
                 today.setHours(0, 0, 0, 0)
                 createNewRoster(today)
-
             }
             else {
                 setRostersList(res.data)
