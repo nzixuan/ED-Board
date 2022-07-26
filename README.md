@@ -38,13 +38,3 @@ Currently it can update and display doctors and nurses roster including showing 
 ## Developer's Guide
 
 [Link](./doc/Developersguide.md)
-
-## Compile list of question to ask DSHO: 
-
-1. Consultancies / HealthTech places for internships
-2. What are organisations looking for when looking out for interns 
-    - Interview 
-    - Personal Statement
-    - Resume
-3. How to sell yourself? 
-4. Honest opinion on myself here in DSHO 
