@@ -1,23 +1,50 @@
 # ED-Board
 
-***make sure to install latest version of nodev16.15.0 and npm 8.5.5
-***make sure while testing on tv/network to change url in .env.development to ip
+## Introduction
 
+ED-Board is a digital rostering display board. It is developed to quickly and reliably display updated roster information for TTSH Emergency Department (ED).
 
-run  'npm install'
-To run mongodb compass on wsl kill mongodb process on windows and run mongo daemon on wsl
+Currently it can update and display doctors and nurses roster including showing up to 5 shifts for doctors and 3 shifts for nurse, display to 7 different board layouts to displayed at different locations in ED and show up to 28 rows of assignments per board.
 
-install mongodb and database https://docs.microsoft.com/en-us/windows/wsl/tutorials/wsl-database
-** shitty version of mongo db for ubuntu 
+## Getting Started
 
-run mongo daemon ' sudo mongod --dbpath ~/data/db '
+### Fresh install
 
-sudo systemctl start mongod
-sudo systemctl status mongod
-edit .env files
+1. Clone this repository
+2. Install the node v16.15.0, npm v8.5.5, MongoDB v5.0.8 and MongoDB database tools
+3. Install dependencies. Run `npm install` in `/ED-Board/frontend` and `/ED-Board/backend`
+4. Restore database using mongorestore
+`mongorestore /ED-Board/dump`
 
+### Using Oracle Virtual Box
 
-bug list:
+1. Clone virtual box image 
+2. Log in to user `ed` with password `ed`
 
-*Front end 
-Two duplicated front rows in front end will be both shown as selected when one is selected.
+### Running servers
+
+1. Ensure api url reflected in `~/ED-Board/frontend/.env.production` is correct
+    - If yes skip to 3
+2. Rebuild frontend. With CWD of `~/ED-Board/frontend` run `npm run build`
+3. Run Mongo Daemon `sudo systemctl start mongod`
+    - Use `sudo systemctl status mongod` to check if mongod is running successfully
+4. Run frontend. With CWD of `~/ED-Board/frontend` run `serve -s build &`
+5. Run backend. With CWD of `~/ED-Board/backend` run `nodemon server &`
+
+## User's Guide
+
+[Link](./doc/Userguide.md)
+
+## Developer's Guide
+
+[Link](./doc/Developersguide.md)
+
+## Compile list of question to ask DSHO: 
+
+1. Consultancies / HealthTech places for internships
+2. What are organisations looking for when looking out for interns 
+    - Interview 
+    - Personal Statement
+    - Resume
+3. How to sell yourself? 
+4. Honest opinion on myself here in DSHO 

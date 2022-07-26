@@ -1,1 +1,0 @@
-{"indexes":[{"v":{"$numberInt":"2"},"key":{"_id":{"$numberInt":"1"}},"name":"_id_"}],"uuid":"3925010c6c27492d8e2566e4a9704429","collectionName":"audit-trail","type":"collection"}
