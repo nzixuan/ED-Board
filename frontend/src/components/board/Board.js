@@ -9,7 +9,7 @@ import "./Board.css"
 class Board extends Component {
     constructor(props) {
         super(props);
-        this.state = { rosters: [], time: "-", date: "-" };
+        this.state = { rosters: [], time: "-", date: "-", error: false };
         this.loadData = this.loadData.bind(this);
     }
 
@@ -54,10 +54,10 @@ class Board extends Component {
                 }
             });
 
-            this.setState({ rosters: rosters, time: data.data.timeString, date: data.data.dateString })
+            this.setState({ rosters: rosters, time: data.data.timeString, date: data.data.dateString, error: false })
         } catch (err) {
             //TODO: Log Error on screen
-            // this.setState({ rosters: [] })
+            this.setState({ ...this.state, error: true })
         }
     };
 
@@ -75,7 +75,7 @@ class Board extends Component {
 
         return (
             <div className="board">
-                <BoardHeader time={this.state.time} date={this.state.date} name={this.props.name}></BoardHeader>
+                <BoardHeader time={this.state.time} date={this.state.date} name={this.props.name} error={this.state.error}></BoardHeader>
                 <div className="tables" >
                     {
                         this.state.rosters.length > 0 && this.state.rosters.map((roster, index) => {
