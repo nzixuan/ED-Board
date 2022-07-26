@@ -1,4 +1,6 @@
 
+# Developers Guide
+
 ## User requirements
 
 ### User stories
@@ -24,8 +26,6 @@
 1. Limited or no changes to exisiting scheduling workflow
 2. Ease of adoption and use
 
-# Developers Guide
-
 ## Design and Architecture
 
 ### Architectural Diagram
@@ -40,11 +40,17 @@
 
 To add new boards, new staff type or adding super-admin. One would need to manually add the necessary change to the config document. 
 
-1. Use MongoDB compass 
+1. Use Mongo / MongoDB Compass 
     - Connect to database and make changes from there
     - If database is on a seperate server, it is possible to use mongodump and mongorestore to migrate the database
 
 2. Use API calls on an API Client 
+
+For config changes, use `/api/edboard/config` post route with header of token after logging in with `/api/edboard/user/login`
+
+To add new boards, add board with configurations to `boards` and `boardNames` objects. 
+
+To add new staff type, add desired staff type to `boards` object
 
 ## Guide for making frontend changes 
 
