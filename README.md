@@ -31,6 +31,7 @@ Currently it can update and display doctors and nurses roster including showing 
 4. Run frontend. With CWD of `~/ED-Board/frontend` run `serve -s build &`
 5. Run backend. With CWD of `~/ED-Board/backend` run `nodemon server &`
 
+6. Default super-admin username `admin` password `admin1234`
 ## User's Guide
 
 [Link](./doc/Userguide.md)
